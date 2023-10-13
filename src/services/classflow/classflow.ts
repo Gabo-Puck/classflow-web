@@ -1,10 +1,18 @@
 import { ERROR_TYPES, axiosClassflow } from "./axios";
-import { AxiosRequestConfig } from "axios"
+import { AxiosRequestConfig, AxiosResponse } from "axios"
+
+interface Response<R> {
+    message: string;
+    data: R
+}
+
+export interface ResponseClassflow<T> extends AxiosResponse<Response<T>>{
+}
 
 interface IService<R> {
     go: () => Promise<R>
     onSend: () => void;
-    onSuccess: (data: R) => void;
+    onSuccess: (data: AxiosResponse<Response<R>>) => void;
     onError: (data: any) => void;
     onErrorNoResponse: (data: R) => void;
     onErrorPreparing: (data: R) => void;
@@ -14,15 +22,15 @@ interface IService<R> {
 class Service<D, R>{
     axios = axiosClassflow;
     url: string;
-    data: D;
+    data?: D;
     config?: AxiosRequestConfig<D> | undefined;
     onSend = () => { };
-    onSuccess = (data: R) => { console.log({ data }) };
+    onSuccess = (data: AxiosResponse<Response<R>>) => { console.log({ data }) };
     onError = (data: any) => { console.log({ data }) };
     onErrorNoResponse = (error: any) => { console.log({ error }); };
     onErrorPreparing = (error: any) => { console.log({ error }); };
     onFinally = () => { };
-    constructor(url: string, config: AxiosRequestConfig<D> | undefined, data: D) {
+    constructor(url: string, config: AxiosRequestConfig<D> | undefined, data?: D) {
         this.url = url;
         this.config = config
         this.data = data;

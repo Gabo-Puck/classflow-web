@@ -4,6 +4,7 @@ import '@mantine/core/styles.css';
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { Container, createTheme, MantineProvider } from '@mantine/core';
 import Login from './pages/Login';
+import Panel from '@pages/Panel';
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />
+  },
+  {
+    path:"/panel",
+    element: <Panel/>
   }
 ])
 const theme = createTheme({

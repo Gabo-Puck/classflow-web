@@ -10,7 +10,8 @@ if (!CLASSFLOW_API)
 
 const axiosInstance = axios.create({
     baseURL: CLASSFLOW_API,
-    timeout: 2500
+    timeout: 2500,
+    withCredentials: true
 });
 
 // Agregar un interceptor a la petición
