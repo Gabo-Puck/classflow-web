@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { Container, createTheme, MantineProvider } from '@mantine/core';
 import Login from './pages/Login';
 import Panel from '@pages/Panel';
+import VerifyEmail from '@pages/verify-email';
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
   {
     path:"/panel",
     element: <Panel/>
+  },
+  {
+    path:"/validate",
+    element: <VerifyEmail/>
   }
 ])
 const theme = createTheme({

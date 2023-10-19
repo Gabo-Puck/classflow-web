@@ -3,8 +3,8 @@ import { UserFormProvider, UserFormValues, useUserForm } from "./login-form.cont
 import { executeValidations } from "@validations/exec-validations.validator";
 import { validateEmailPattern, validatePasswordPattern } from "@validations/login";
 import { isRequired, minLength } from "@validations/basic";
-import { ClassflowPostService, classflowAPI } from "@services/classflow/classflow";
-import axios from "axios";
+import { ClassflowPostService, ResponseClassflow, classflowAPI } from "@services/classflow/classflow";
+import axios, { AxiosResponse } from "axios";
 
 export default function LoginForm() {
     const form = useUserForm({
@@ -37,7 +37,7 @@ export default function LoginForm() {
     })
 
     const onError = () => { }
-    const onSuccess = (data: string) => {
+    const onSuccess = (data: ResponseClassflow<string>) => {
         console.log("TOKEN", data);
     }
     const onSend = () => { }

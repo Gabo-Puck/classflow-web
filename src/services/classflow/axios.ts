@@ -62,7 +62,7 @@ axiosInstance.interceptors.response.use(function (response) {
         response = { ...error, errorCause: ERROR_TYPES.PREPARING }
     }
     console.log(response);
-    return Promise.reject(error);
+    return Promise.reject(response);
 });
 
 export const axiosClassflow = axiosInstance;

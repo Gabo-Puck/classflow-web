@@ -1,5 +1,5 @@
 import { ERROR_TYPES, axiosClassflow } from "./axios";
-import { AxiosRequestConfig, AxiosResponse } from "axios"
+import { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios"
 
 interface Response<R> {
     message: string;
@@ -8,12 +8,14 @@ interface Response<R> {
 
 export interface ResponseClassflow<T> extends AxiosResponse<Response<T>>{
 }
+export interface ErrorClassflow<T> extends AxiosError<Response<T>>{
+}
 
 interface IService<R> {
     go: () => Promise<R>
     onSend: () => void;
     onSuccess: (data: AxiosResponse<Response<R>>) => void;
-    onError: (data: any) => void;
+    onError: (data: AxiosError<Response<R>>) => void;
     onErrorNoResponse: (data: R) => void;
     onErrorPreparing: (data: R) => void;
     onFinally: () => void;
@@ -26,7 +28,7 @@ class Service<D, R>{
     config?: AxiosRequestConfig<D> | undefined;
     onSend = () => { };
     onSuccess = (data: AxiosResponse<Response<R>>) => { console.log({ data }) };
-    onError = (data: any) => { console.log({ data }) };
+    onError = (data: AxiosError<Response<R>>) => { console.log({ data }) };
     onErrorNoResponse = (error: any) => { console.log({ error }); };
     onErrorPreparing = (error: any) => { console.log({ error }); };
     onFinally = () => { };
