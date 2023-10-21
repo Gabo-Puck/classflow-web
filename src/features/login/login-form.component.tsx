@@ -5,8 +5,11 @@ import { validateEmailPattern, validatePasswordPattern } from "@validations/logi
 import { isRequired, minLength } from "@validations/basic";
 import { ClassflowPostService, ResponseClassflow, classflowAPI } from "@services/classflow/classflow";
 import axios, { AxiosResponse } from "axios";
+import { useAuth } from "@features/auth/auth-context";
+import { useEffect } from "react";
 
 export default function LoginForm() {
+    const userData = useAuth();
     const form = useUserForm({
         initialValues: {
             email: "",
@@ -40,11 +43,14 @@ export default function LoginForm() {
     const onSuccess = (data: ResponseClassflow<string>) => {
         console.log("TOKEN", data);
     }
+    useEffect(() => {
+        console.log({ userData });
+    }, [userData])
     const onSend = () => { }
     const onFinally = () => { }
     const handleSubmit = async (values: UserFormValues) => {
         console.log({ values });
-        let get = new ClassflowPostService<UserFormValues, string>("/authorization", {}, values);
+        let get = new ClassflowPostService<UserFormValues, string, string>("/authorization", {}, values);
         // let res = await axios.post("http://127.0.0.1:8000/authorization",values);
         get.onSend = onSend;
         get.onError = onError;

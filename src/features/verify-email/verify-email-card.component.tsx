@@ -35,7 +35,7 @@ export default function VerifyEmailCard() {
         setLoading(false);
     }
     useEffect(() => {
-        let get = new ClassflowGetService<string, string>(`/users/validate/${searchParams.get("token")}`, {});
+        let get = new ClassflowGetService<string, string, string>(`/users/validate/${searchParams.get("token")}`, {});
         get.onError = onError;
         get.onSuccess = onSuccess;
         get.onFinally = onFinally;

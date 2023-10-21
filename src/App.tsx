@@ -6,6 +6,8 @@ import { Container, createTheme, MantineProvider } from '@mantine/core';
 import Login from './pages/Login';
 import Panel from '@pages/Panel';
 import VerifyEmail from '@pages/verify-email';
+import ApplicationWrapper from '@features/auth/auth-component';
+import { AuthProvider } from '@features/auth/auth-context';
 
 const router = createBrowserRouter([
   {
@@ -14,17 +16,24 @@ const router = createBrowserRouter([
     element: <div>Landing page</div>
   },
   {
-    path: "/login",
-    element: <Login />
+    path: "/app",
+    element: <AuthProvider />,
+    children: [
+      {
+        path: "login",
+        element: <Login />,
+      },
+      {
+        path: "panel",
+        element: <Panel />
+      },
+      {
+        path: "validate",
+        element: <VerifyEmail />
+      }
+    ]
   },
-  {
-    path:"/panel",
-    element: <Panel/>
-  },
-  {
-    path:"/validate",
-    element: <VerifyEmail/>
-  }
+
 ])
 const theme = createTheme({
   components: {
@@ -39,7 +48,8 @@ function App() {
   return (
     <MantineProvider defaultColorScheme='dark' theme={theme}>
       <RouterProvider router={router} />
-    </MantineProvider>
+    </MantineProvider >
+
   )
 }
 

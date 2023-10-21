@@ -1,16 +1,26 @@
-import { type Dispatch, createContext, useContext, useReducer } from 'react';
+import { Text } from '@mantine/core';
+import { ClassflowGetService, ClassflowPostService, ErrorClassflow, ResponseClassflow, classflowAPI } from '@services/classflow/classflow';
+import { AxiosError } from 'axios';
+import { type Dispatch, createContext, useContext, useReducer, useEffect, useState } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
 
 export enum UserActionKind {
     LOGIN = "LOGIN",
-    UPDATED = "UPDATED"
+    UPDATED = "UPDATED",
+    LOGOUT = "LOGOUT"
+}
+
+export enum ROLES {
+    PROFESSOR = "PROFESSOR",
+    STUDENT = "STUDENT"
 }
 
 interface User {
-    id: number
     name: string
-    lastname: string
-    profileImage: string
+    profilePic: string
+    role: ROLES | ""
 }
+
 
 interface UserAction {
     type: UserActionKind;
@@ -20,14 +30,47 @@ const AuthContext = createContext<User | null>(null);
 const TasksDispatchContext = createContext<Dispatch<UserAction> | null>(null);
 
 export function AuthProvider({ children }: any) {
+    let navigate = useNavigate();
     const [tasks, dispatch] = useReducer(
         userReducer,
         initialUser
     );
+    const [loading, setLoading] = useState(true);
+    const onError = (data: ErrorClassflow<string>) => {
+        navigate("/app/login")
+    }
+    const onSuccess = (data: ResponseClassflow<User>) => {
+        setLoading(false)
+        console.log("TOKEN", data);
+        let { data: { data: userData } } = data;
+        dispatch({
+            type: UserActionKind.LOGIN,
+            payload: userData
+
+        })
+    }
+    const onSend = () => { }
+    const onFinally = () => { 
+        setLoading(false)
+    }
+    const handleSubmit = async () => {
+        let get = new ClassflowGetService<string, User, string>("/authorization/validate", {});
+        get.onSend = onSend;
+        get.onError = onError;
+        get.onSuccess = onSuccess;
+        get.onFinally = onFinally;
+        await classflowAPI.exec(get);
+    }
+    useEffect(() => {
+        handleSubmit()
+    }, [])
+    if (loading) {
+        return <Text>Loadingx...</Text>
+    }
     return (
         <AuthContext.Provider value={tasks}>
             <TasksDispatchContext.Provider value={dispatch}>
-                {children}
+                <Outlet />
             </TasksDispatchContext.Provider>
         </AuthContext.Provider>
     );
@@ -56,6 +99,9 @@ function userReducer(user: User, action: UserAction) {
                 ...payload
             }
         }
+        case UserActionKind.LOGOUT: {
+            return { ...initialUser };
+        }
         default: {
             throw Error('Unknown action: ' + type);
         }
@@ -63,8 +109,7 @@ function userReducer(user: User, action: UserAction) {
 }
 
 const initialUser: User = {
-    id: -1,
-    lastname: "",
     name: "",
-    profileImage: ""
+    profilePic: "",
+    role: ""
 }
