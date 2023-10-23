@@ -7,8 +7,11 @@ import { ClassflowPostService, ResponseClassflow, classflowAPI } from "@services
 import axios, { AxiosResponse } from "axios";
 import { useAuth } from "@features/auth/auth-context";
 import { useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function LoginForm() {
+    const navigate = useNavigate();
+    const [searchParams, setSearhParams] = useSearchParams();
     const userData = useAuth();
     const form = useUserForm({
         initialValues: {
@@ -42,6 +45,11 @@ export default function LoginForm() {
     const onError = () => { }
     const onSuccess = (data: ResponseClassflow<string>) => {
         console.log("TOKEN", data);
+        let redirect = searchParams.get("redirect");
+        if(redirect)
+            navigate(redirect);
+        else
+            navigate("/app/panel");
     }
     useEffect(() => {
         console.log({ userData });

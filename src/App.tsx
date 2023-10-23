@@ -2,12 +2,12 @@ import cx from 'clsx';
 import style from './App.module.css'
 import '@mantine/core/styles.css';
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
-import { Container, createTheme, MantineProvider } from '@mantine/core';
+import { Container, createTheme, MantineProvider, Text } from '@mantine/core';
 import Login from './pages/Login';
 import Panel from '@pages/Panel';
 import VerifyEmail from '@pages/verify-email';
-import ApplicationWrapper from '@features/auth/auth-component';
-import { AuthProvider } from '@features/auth/auth-context';
+import { AuthProvider, ROLES } from '@features/auth/auth-context';
+import { PrivateEndpoint } from '@features/auth/auth-private-endpoint';
 
 const router = createBrowserRouter([
   {
@@ -26,6 +26,12 @@ const router = createBrowserRouter([
       {
         path: "panel",
         element: <Panel />
+      },
+      {
+        path: "professor",
+        element: <PrivateEndpoint role={ROLES.STUDENT}>
+          <Text>Professor!</Text>
+        </PrivateEndpoint>
       },
       {
         path: "validate",

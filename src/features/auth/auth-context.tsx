@@ -2,7 +2,7 @@ import { Text } from '@mantine/core';
 import { ClassflowGetService, ClassflowPostService, ErrorClassflow, ResponseClassflow, classflowAPI } from '@services/classflow/classflow';
 import { AxiosError } from 'axios';
 import { type Dispatch, createContext, useContext, useReducer, useEffect, useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 export enum UserActionKind {
     LOGIN = "LOGIN",
@@ -27,17 +27,23 @@ interface UserAction {
     payload: User
 }
 const AuthContext = createContext<User | null>(null);
-const TasksDispatchContext = createContext<Dispatch<UserAction> | null>(null);
+const UserDispatchContext = createContext<Dispatch<UserAction> | null>(null);
 
 export function AuthProvider({ children }: any) {
     let navigate = useNavigate();
+    let location = useLocation();
     const [tasks, dispatch] = useReducer(
         userReducer,
         initialUser
     );
     const [loading, setLoading] = useState(true);
     const onError = (data: ErrorClassflow<string>) => {
-        navigate("/app/login")
+        let { pathname, search } = location;
+        let redirect = "";
+        if (pathname !== "/app/login") {
+            redirect = `?redirect=${pathname}${search}`;
+        }
+        navigate(`/app/login${redirect}`)
     }
     const onSuccess = (data: ResponseClassflow<User>) => {
         setLoading(false)
@@ -50,7 +56,7 @@ export function AuthProvider({ children }: any) {
         })
     }
     const onSend = () => { }
-    const onFinally = () => { 
+    const onFinally = () => {
         setLoading(false)
     }
     const handleSubmit = async () => {
@@ -69,9 +75,9 @@ export function AuthProvider({ children }: any) {
     }
     return (
         <AuthContext.Provider value={tasks}>
-            <TasksDispatchContext.Provider value={dispatch}>
+            <UserDispatchContext.Provider value={dispatch}>
                 <Outlet />
-            </TasksDispatchContext.Provider>
+            </UserDispatchContext.Provider>
         </AuthContext.Provider>
     );
 }
@@ -81,7 +87,7 @@ export function useAuth() {
 }
 
 export function useAuthDispatch() {
-    return useContext(TasksDispatchContext);
+    return useContext(UserDispatchContext);
 }
 
 function userReducer(user: User, action: UserAction) {
