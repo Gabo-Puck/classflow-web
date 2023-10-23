@@ -19,3 +19,7 @@ export function matchPattern(value: string | undefined, regex: RegExp) {
         return regex.test(value)
     return false
 }
+
+export function matchValues(value1: string | undefined, value2: string | undefined) {
+    return value1 === value2
+}

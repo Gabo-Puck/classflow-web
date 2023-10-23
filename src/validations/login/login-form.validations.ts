@@ -6,6 +6,7 @@ export function validateEmailPattern(email: string | undefined) {
 export function validatePasswordLength(password: string | undefined) {
     return minLength(password, 8)
 }
+
 export function validatePasswordPattern(password: string | undefined) {
     return matchPattern(password, /[A-Z]/)
 }

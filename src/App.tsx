@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { Container, createTheme, MantineProvider, Text } from '@mantine/core';
 import Login from './pages/Login';
 import Panel from '@pages/Panel';
+import Signup from "@pages/Signup";
 import VerifyEmail from '@pages/verify-email';
 import { AuthProvider, ROLES } from '@features/auth/auth-context';
 import { PrivateEndpoint } from '@features/auth/auth-private-endpoint';
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
     path: "/",
     index: true,
     element: <div>Landing page</div>
+  },
+  {
+    path: "/registrarse",
+    element: <Signup />
   },
   {
     path: "/app",

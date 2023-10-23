@@ -3,9 +3,11 @@ import ClassCard from "./panel-class-card.component";
 import { ClassItem, useClassDispatch, useClasses } from "./panel-list.context"
 import { ClassflowGetService, ResponseClassflow, classflowAPI } from "@services/classflow/classflow";
 import axios, { AxiosResponse } from "axios";
+import { ROLES, useAuth } from "@features/auth/auth-context";
 
 export default function ClassList() {
     const classes = useClasses();
+    const userDate = useAuth();
     const dispatch = useClassDispatch();
     const [loading, setLoading] = useState(true);
     const onError = () => {
@@ -27,7 +29,12 @@ export default function ClassList() {
         setLoading(false);
     }
     const getClasses = async () => {
-        let get = new ClassflowGetService<null, ClassItem[]>("/classes/students", {
+        let url = "";
+        if (userDate?.role === ROLES.STUDENT)
+            url = "/classes/students";
+        else
+            url = "/classes/professor"
+        let get = new ClassflowGetService<null, ClassItem[], string>(url, {
         });
         get.onSend = onSend;
         get.onError = onError;
