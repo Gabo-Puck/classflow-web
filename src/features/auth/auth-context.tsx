@@ -1,4 +1,5 @@
 import { Text } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
 import { ClassflowGetService, ClassflowPostService, ErrorClassflow, ResponseClassflow, classflowAPI } from '@services/classflow/classflow';
 import { AxiosError } from 'axios';
 import { type Dispatch, createContext, useContext, useReducer, useEffect, useState } from 'react';
@@ -40,10 +41,10 @@ export function AuthProvider({ children }: any) {
     const onError = (data: ErrorClassflow<string>) => {
         let { pathname, search } = location;
         let redirect = "";
-        if (pathname !== "/app/login") {
+        if (pathname !== "/login") {
             redirect = `?redirect=${pathname}${search}`;
         }
-        navigate(`/app/login${redirect}`)
+        navigate(`/login${redirect}`)
     }
     const onSuccess = (data: ResponseClassflow<User>) => {
         setLoading(false)

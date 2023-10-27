@@ -30,6 +30,7 @@ export default function ClassList() {
     }
     const getClasses = async () => {
         let url = "";
+        console.log({ userDate });
         if (userDate?.role === ROLES.STUDENT)
             url = "/classes/students";
         else

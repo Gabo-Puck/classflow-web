@@ -1,18 +1,22 @@
-import { Button, Container, PasswordInput, Stack, TextInput } from "@mantine/core";
+import { Button, Container, PasswordInput, Stack, Text, TextInput } from "@mantine/core";
 import { UserFormProvider, UserFormValues, useUserForm } from "./login-form.context";
 import { executeValidations } from "@validations/exec-validations.validator";
 import { validateEmailPattern, validatePasswordPattern } from "@validations/login";
 import { isRequired, minLength } from "@validations/basic";
-import { ClassflowPostService, ResponseClassflow, classflowAPI } from "@services/classflow/classflow";
+import { ClassflowPostService, ErrorClassflow, ResponseClassflow, classflowAPI } from "@services/classflow/classflow";
 import axios, { AxiosResponse } from "axios";
 import { useAuth } from "@features/auth/auth-context";
-import { useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { ErrorResponse, useNavigate, useSearchParams } from "react-router-dom";
+import { notifications } from "@mantine/notifications";
+import SendValidation from "./send-validation.component";
+
 
 export default function LoginForm() {
     const navigate = useNavigate();
     const [searchParams, setSearhParams] = useSearchParams();
-    const userData = useAuth();
+    const [showValidateEmail, setShowValidateEmail] = useState(false);
+    
     const form = useUserForm({
         initialValues: {
             email: "",
@@ -42,18 +46,25 @@ export default function LoginForm() {
         }
     })
 
-    const onError = () => { }
+    const onError = (data: ErrorClassflow<string>) => {
+        if (data.response?.status == 405) {
+            setShowValidateEmail(true);
+            return
+        }
+        notifications.show({
+            message: data.response?.data.message,
+            title: "Atención",
+
+        })
+    }
     const onSuccess = (data: ResponseClassflow<string>) => {
         console.log("TOKEN", data);
         let redirect = searchParams.get("redirect");
-        if(redirect)
+        if (redirect)
             navigate(redirect);
         else
             navigate("/app/panel");
     }
-    useEffect(() => {
-        console.log({ userData });
-    }, [userData])
     const onSend = () => { }
     const onFinally = () => { }
     const handleSubmit = async (values: UserFormValues) => {
@@ -66,23 +77,28 @@ export default function LoginForm() {
         get.onFinally = onFinally;
         await classflowAPI.exec(get);
     }
+
     return <UserFormProvider form={form}>
         <Container size="responsive">
-            <form onSubmit={form.onSubmit(handleSubmit)}>
-                <Stack>
-                    <TextInput
-                        label="Correo"
-                        placeholder="Correo"
-                        {...form.getInputProps("email")}
-                    />
-                    <PasswordInput
-                        label="Contraseña"
-                        placeholder="Contraseña"
-                        {...form.getInputProps("password")}
-                    />
-                    <Button type="submit">Entrar</Button>
-                </Stack>
-            </form>
+            {
+                !showValidateEmail ?
+                    <form onSubmit={form.onSubmit(handleSubmit)}>
+                        <Stack>
+                            <TextInput
+                                label="Correo"
+                                placeholder="Correo"
+                                {...form.getInputProps("email")}
+                            />
+                            <PasswordInput
+                                label="Contraseña"
+                                placeholder="Contraseña"
+                                {...form.getInputProps("password")}
+                            />
+                            <Button type="submit">Entrar</Button>
+                        </Stack>
+                    </form> :
+                    <SendValidation email={form.values["email"]} />
+            }
         </Container>
     </UserFormProvider>
 
