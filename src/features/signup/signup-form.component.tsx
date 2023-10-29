@@ -91,7 +91,7 @@ export default function LoginForm() {
     const onError = () => { }
     const onSuccess = (data: ResponseClassflow<string>) => {
         console.log("TOKEN", data);
-        navigate("/app/login");
+        navigate("/login");
     }
     useEffect(() => {
         console.log({ userData });

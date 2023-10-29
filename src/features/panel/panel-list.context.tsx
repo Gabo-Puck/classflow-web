@@ -1,7 +1,17 @@
-import { createContext, useReducer, useContext } from "react";
+import { createContext, useReducer, useContext, useState, useEffect, Dispatch } from "react";
 export interface ClassItem {
     id: number;
     name: string;
+    description: string;
+    code: string;
+    professor: {
+        name: string;
+        lastname: string;
+        profilePic: string
+    }
+    _count: {
+        enrolledStudents: number
+    } | undefined
 }
 //define the state's form
 export interface ClassListState {
@@ -16,11 +26,20 @@ type Add = { type: 'add'; payload: ClassItem };
 type Set = { type: 'set'; payload: ClassItem[] };
 type Delete = { type: 'delete', payload: number };
 type ClassItemActions = Add | Delete | Set;
+interface Query {
+    order: number;
+    setOrder: Dispatch<React.SetStateAction<number>>
+
+    query: string;
+    setQuery: Dispatch<React.SetStateAction<string>>
+}
+
 
 //create context for state's form
 export const ClassesContext = createContext<ClassListState | undefined | null>(null);
 //create context for dispatch
 export const ClassesDispatchContext = createContext<React.Dispatch<ClassItemActions> | undefined | null>(null);
+export const QueryContext = createContext<Query | null>(null);
 
 //create reducer to update state
 export function classItemReducer(classes: ClassListState, action: ClassItemActions): ClassListState {
@@ -53,9 +72,24 @@ export function classItemReducer(classes: ClassListState, action: ClassItemActio
 //Create a provider to access both, state and dispatch actions
 export function ClassesProvider({ children }: React.PropsWithChildren) {
     const [classes, dispatch] = useReducer(classItemReducer, initialState);
+    const [order, setOrder] = useState(1)
+    const [query, setQuery] = useState("")
+    useEffect(() => {
+        console.log({ order, query });
+    }, [order, query])
     return <ClassesContext.Provider value={classes}>
         <ClassesDispatchContext.Provider value={dispatch}>
-            {children}
+            <QueryContext.Provider value={
+                {
+                    order,
+                    query,
+                    setOrder,
+                    setQuery
+                }
+            }>
+                {children}
+
+            </QueryContext.Provider>
         </ClassesDispatchContext.Provider>
     </ClassesContext.Provider>
 }
@@ -68,4 +102,8 @@ export function useClasses() {
 //Create a custom hook to access the dispatcher
 export function useClassDispatch() {
     return useContext(ClassesDispatchContext);
+}
+
+export function useQuery() {
+    return useContext(QueryContext);
 }

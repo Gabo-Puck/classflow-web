@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 import ClassCard from "./panel-class-card.component";
-import { ClassItem, useClassDispatch, useClasses } from "./panel-list.context"
+import { ClassItem, useClassDispatch, useClasses, useQuery } from "./panel-list.context"
 import { ClassflowGetService, ResponseClassflow, classflowAPI } from "@services/classflow/classflow";
 import axios, { AxiosResponse } from "axios";
 import { ROLES, useAuth } from "@features/auth/auth-context";
+import ClassCardStudent from "./panel-class-card-student.component";
+import ClassCardProfessor from "./panel-class-card-professor.component";
 
 export default function ClassList() {
     const classes = useClasses();
-    const userDate = useAuth();
+    const filter = useQuery();
+    const userData = useAuth();
     const dispatch = useClassDispatch();
     const [loading, setLoading] = useState(true);
     const onError = () => {
@@ -30,13 +33,11 @@ export default function ClassList() {
     }
     const getClasses = async () => {
         let url = "";
-        console.log({ userDate });
-        if (userDate?.role === ROLES.STUDENT)
+        if (userData?.role === ROLES.STUDENT)
             url = "/classes/students";
         else
             url = "/classes/professor"
-        let get = new ClassflowGetService<null, ClassItem[], string>(url, {
-        });
+        let get = new ClassflowGetService<null, ClassItem[], string>(url, {});
         get.onSend = onSend;
         get.onError = onError;
         get.onSuccess = onSuccess;
@@ -47,7 +48,10 @@ export default function ClassList() {
     useEffect(() => {
         getClasses();
     }, [])
+    useEffect(() => {
+        console.log({ filter });
+    }, [filter])
     return <>
-        {classes.items.map((c) => <ClassCard item={c} />)}
+        {classes.items.map((c) => userData?.role === ROLES.STUDENT ? <ClassCardStudent item={c} /> : <ClassCardProfessor item={c} />)}
     </>
 }

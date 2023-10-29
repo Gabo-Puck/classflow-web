@@ -10,7 +10,7 @@ if (!CLASSFLOW_API)
 
 const axiosInstance = axios.create({
     baseURL: CLASSFLOW_API,
-    timeout: 2500,
+    timeout: 600000,
     withCredentials: true
 });
 

@@ -1,7 +1,7 @@
 import { Text } from '@mantine/core';
-import { Notifications } from '@mantine/notifications';
+
 import { ClassflowGetService, ClassflowPostService, ErrorClassflow, ResponseClassflow, classflowAPI } from '@services/classflow/classflow';
-import { AxiosError } from 'axios';
+
 import { type Dispatch, createContext, useContext, useReducer, useEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
@@ -27,6 +27,8 @@ interface UserAction {
     type: UserActionKind;
     payload: User
 }
+
+
 const AuthContext = createContext<User | null>(null);
 const UserDispatchContext = createContext<Dispatch<UserAction> | null>(null);
 
@@ -37,6 +39,8 @@ export function AuthProvider({ children }: any) {
         userReducer,
         initialUser
     );
+
+
     const [loading, setLoading] = useState(true);
     const onError = (data: ErrorClassflow<string>) => {
         let { pathname, search } = location;
@@ -71,6 +75,7 @@ export function AuthProvider({ children }: any) {
     useEffect(() => {
         handleSubmit()
     }, [])
+
     if (loading) {
         return <Text>Loadingx...</Text>
     }
@@ -82,6 +87,8 @@ export function AuthProvider({ children }: any) {
         </AuthContext.Provider>
     );
 }
+
+
 
 export function useAuth() {
     return useContext(AuthContext);

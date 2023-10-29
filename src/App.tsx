@@ -5,13 +5,16 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { Container, createTheme, MantineProvider, Text } from '@mantine/core';
 import { Notifications } from "@mantine/notifications";
 import { ModalsProvider } from "@mantine/modals";
-import Login from './pages/Login';
-import Panel from '@pages/Panel';
-import Signup from "@pages/Signup";
+import Login from './pages/login';
+import Panel from '@pages/panel';
+import Signup from "@pages/signup";
 import VerifyEmail from '@pages/verify-email';
 import { AuthProvider, ROLES } from '@features/auth/auth-context';
 import { PrivateEndpoint } from '@features/auth/auth-private-endpoint';
 import '@mantine/notifications/styles.css';
+import { ClassDetailContext, ClassProvider } from '@features/class/class-detail.context';
+import ClassHeader from '@features/class/class-header.component';
+import ClassBoard from '@pages/ClassBoard';
 const router = createBrowserRouter([
   {
     path: "/",
@@ -32,7 +35,18 @@ const router = createBrowserRouter([
     children: [
       {
         path: "panel",
-        element: <Panel />
+        element: <Panel />,
+
+      },
+      {
+        path: "class/:classId",
+        element: <ClassProvider />,
+        children: [
+          {
+            index: true,
+            element: <ClassBoard />
+          }
+        ]
       },
       {
         path: "professor",
