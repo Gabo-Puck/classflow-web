@@ -5,14 +5,11 @@ import { useState } from 'react';
 import { ClassflowGetService, ClassflowPostService, ErrorClassflow, ResponseClassflow, classflowAPI } from '@services/classflow/classflow';
 import { notifications } from '@mantine/notifications';
 import { IconRefresh, IconRefreshAlert, IconRefreshDot, IconRefreshOff } from '@tabler/icons-react';
-import { ROLES, useRole } from '@features/auth/auth-context';
-import { ButtonModalEnrollEmail } from './class-invitation-classflow.component';
 
-export default function ClassInvitationModes() {
+export default function ClassInvitationCode() {
     const classDetail = useClassDetail();
     const dispatch = useClassDetailsDispatch();
     const [loading, setLoading] = useState(false);
-    const role = useRole();
     if (!dispatch)
         throw new Error("Classheader should be defined inside a ClassContextProvider");
     if (!classDetail)
@@ -61,7 +58,7 @@ export default function ClassInvitationModes() {
         await classflowAPI.exec(get);
     }
     return (
-        <Card withBorder padding="lg" radius="md" component={Stack} w="100%">
+        <Card withBorder padding="lg" radius="md" component={Stack} w="250px">
             <Text fz="lg" fw={500} mt="md">
                 Codigo de invitación
             </Text>
@@ -69,14 +66,13 @@ export default function ClassInvitationModes() {
                 <Text fz="sm" c="dimmed" m={0}>
                     {classDetail.code}
                 </Text>
-                {role === ROLES.PROFESSOR && <Tooltip title='Nuevo código' label="Nuevo código">
+                <Tooltip title='Nuevo código' label="Nuevo código">
                     <ActionIcon variant='subtle' loading={loading} onClick={handleRegenCode}>
                         <IconRefresh />
                     </ActionIcon>
-                </Tooltip>}
+                </Tooltip>
             </Group>
             <Button disabled={loading} onClick={handleCoppy}>Copiar código</Button>
-            <ButtonModalEnrollEmail />
         </Card>
     );
 }

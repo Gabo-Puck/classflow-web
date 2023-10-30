@@ -34,17 +34,24 @@ const router = createBrowserRouter([
     element: <AuthProvider />,
     children: [
       {
-        path: "panel",
+        path: "tablero",
         element: <Panel />,
-
+        index: true
       },
       {
-        path: "class/:classId",
-        element: <ClassProvider />,
+        path: "clase",
         children: [
           {
-            index: true,
-            element: <ClassBoard />
+            path: "crear",
+
+          },
+          {
+            path: ":classId",
+            element: <ClassProvider />,
+            children: [{
+              element: <ClassBoard />,
+              index: true
+            }]
           }
         ]
       },

@@ -22,7 +22,7 @@ export default function ClassCardProfessor({ item }: ClassItemProps) {
             padding="lg"
             radius="md"
             component={Link}
-            to={`/app/class/${item.id}`}
+            to={`/app/clase/${item.id}`}
             w="250px">
             <Text fz="lg" fw={500} mt="md">
                 {item.name}

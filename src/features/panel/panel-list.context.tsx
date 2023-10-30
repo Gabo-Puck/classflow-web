@@ -15,17 +15,18 @@ export interface ClassItem {
 }
 //define the state's form
 export interface ClassListState {
-    items: ClassItem[]
+    items: ClassItem[] | null
 }
 //define initial state 
 let initialState: ClassListState = {
-    items: []
+    items: null
 }
 //define which actions can be perform in the reducer
 type Add = { type: 'add'; payload: ClassItem };
 type Set = { type: 'set'; payload: ClassItem[] };
 type Delete = { type: 'delete', payload: number };
-type ClassItemActions = Add | Delete | Set;
+type Unset = { type: 'unset' };
+type ClassItemActions = Add | Delete | Set | Unset;
 interface Query {
     order: number;
     setOrder: Dispatch<React.SetStateAction<number>>
@@ -50,17 +51,20 @@ export function classItemReducer(classes: ClassListState, action: ClassItemActio
                 items: action.payload
             }
         }
-        case 'add': {
-            return {
-                ...classes,
-                items: [...classes.items, { ...action.payload }]
-            };
-        }
         case 'delete': {
+            if (!classes.items) {
+                return { ...classes }
+            }
             return {
                 ...classes,
                 items: classes.items.filter((t) => t.id === action.payload)
             };
+        }
+        case 'unset': {
+            return {
+                ...classes,
+                items: null
+            }
         }
         default: {
             console.error("Unknown action: ", action);

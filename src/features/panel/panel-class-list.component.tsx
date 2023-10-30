@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import ClassCard from "./panel-class-card.component";
 import { ClassItem, useClassDispatch, useClasses, useQuery } from "./panel-list.context"
 import { ClassflowGetService, ResponseClassflow, classflowAPI } from "@services/classflow/classflow";
-import axios, { AxiosResponse } from "axios";
 import { ROLES, useAuth } from "@features/auth/auth-context";
 import ClassCardStudent from "./panel-class-card-student.component";
 import ClassCardProfessor from "./panel-class-card-professor.component";
+import { Text } from "@mantine/core";
 
 export default function ClassList() {
     const classes = useClasses();
@@ -18,7 +17,7 @@ export default function ClassList() {
     }
     if (!classes || !dispatch)
         throw new Error("ClassList should be defined as children of ClassProvider")
-
+    const { items } = classes;
     const onSuccess = ({ data, status }: ResponseClassflow<ClassItem[]>) => {
         dispatch({
             type: "set",
@@ -46,11 +45,14 @@ export default function ClassList() {
     }
 
     useEffect(() => {
-        getClasses();
-    }, [])
-    useEffect(() => {
-        console.log({ filter });
-    }, [filter])
+        console.log({ classes });
+        if (classes.items === null) {
+            getClasses();
+        }
+    }, [classes.items])
+    if (loading || classes.items === null) {
+        return <Text>Loading...</Text>
+    }
     return <>
         {classes.items.map((c) => userData?.role === ROLES.STUDENT ? <ClassCardStudent item={c} /> : <ClassCardProfessor item={c} />)}
     </>

@@ -19,6 +19,7 @@ export enum ROLES {
 interface User {
     name: string
     profilePic: string
+    email: string
     role: ROLES | ""
 }
 
@@ -93,6 +94,9 @@ export function AuthProvider({ children }: any) {
 export function useAuth() {
     return useContext(AuthContext);
 }
+export function useRole() {
+    return useContext(AuthContext)?.role;
+}
 
 export function useAuthDispatch() {
     return useContext(UserDispatchContext);
@@ -125,5 +129,6 @@ function userReducer(user: User, action: UserAction) {
 const initialUser: User = {
     name: "",
     profilePic: "",
-    role: ""
+    role: "",
+    email: ""
 }

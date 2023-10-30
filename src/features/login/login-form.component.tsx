@@ -63,7 +63,7 @@ export default function LoginForm() {
         if (redirect)
             navigate(redirect);
         else
-            navigate("/app/panel");
+            navigate("/app/tablero");
     }
     const onSend = () => { }
     const onFinally = () => { }

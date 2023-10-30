@@ -14,6 +14,11 @@ export function maxLength(value: string, max: number) {
         return value.length < max;
     return false;
 }
+export function exactLength(value: string, length: number) {
+    if (value)
+        return value.length === length
+    return false;
+}
 export function matchPattern(value: string | undefined, regex: RegExp) {
     if (value)
         return regex.test(value)
