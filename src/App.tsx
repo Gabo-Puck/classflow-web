@@ -14,7 +14,9 @@ import { PrivateEndpoint } from '@features/auth/auth-private-endpoint';
 import '@mantine/notifications/styles.css';
 import { ClassDetailContext, ClassProvider } from '@features/class/class-detail.context';
 import ClassHeader from '@features/class/class-header.component';
-import ClassBoard from '@pages/ClassBoard';
+import ClassBoard from '@pages/class-board';
+import { InvitationProvider } from '@features/invitations/invitations-list.context';
+import Invitations from '@pages/Invitations';
 const router = createBrowserRouter([
   {
     path: "/",
@@ -54,6 +56,19 @@ const router = createBrowserRouter([
             }]
           }
         ]
+      },
+      {
+        path: "invitaciones",
+        element: (
+          <PrivateEndpoint role={ROLES.STUDENT} />
+        ),
+        children: [
+          {
+            index: true,
+            element: <Invitations />
+          }
+        ]
+
       },
       {
         path: "professor",

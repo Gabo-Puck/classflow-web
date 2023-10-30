@@ -62,11 +62,11 @@ export default function ClassInvitationModes() {
     }
     return (
         <Card withBorder padding="lg" radius="md" component={Stack} w="100%">
-            <Text fz="lg" fw={500} mt="md">
+            <Text fz="lg" fw={500} mt="md" ta="center">
                 Codigo de invitación
             </Text>
-            <Group align="center">
-                <Text fz="sm" c="dimmed" m={0}>
+            <Group align="center" justify='center'>
+                <Text fz="lg" c="dimmed" fw="bold" m={0}>
                     {classDetail.code}
                 </Text>
                 {role === ROLES.PROFESSOR && <Tooltip title='Nuevo código' label="Nuevo código">

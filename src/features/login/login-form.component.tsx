@@ -68,7 +68,6 @@ export default function LoginForm() {
     const onSend = () => { }
     const onFinally = () => { }
     const handleSubmit = async (values: UserFormValues) => {
-        console.log({ values });
         let get = new ClassflowPostService<UserFormValues, string, string>("/authorization", {}, values);
         // let res = await axios.post("http://127.0.0.1:8000/authorization",values);
         get.onSend = onSend;

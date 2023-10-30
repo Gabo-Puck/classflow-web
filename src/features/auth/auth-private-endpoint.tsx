@@ -1,3 +1,4 @@
+import { Outlet } from "react-router-dom";
 import { useAuth } from "./auth-context";
 import PermissionDenied from "./auth-permisson-denied";
 
@@ -9,6 +10,6 @@ export function PrivateEndpoint({ role, children }: PrivateEndpointProps) {
     if (userData?.role !== role) {
         return <PermissionDenied />
     }
-    return children
+    return <Outlet/>
 
 }

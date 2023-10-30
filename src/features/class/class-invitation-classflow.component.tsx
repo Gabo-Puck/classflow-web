@@ -1,5 +1,5 @@
-import { ActionIcon, Box, Button, Center, ElementProps, Modal, ModalContent, ScrollArea, Stack, Text } from "@mantine/core";
-import { ErrorClassflow, ResponseClassflow } from "@services/classflow/classflow";
+import { ActionIcon, Box, Button, Center, ElementProps, Modal, ModalContent, ScrollArea, Stack, Text, Tooltip } from "@mantine/core";
+import { ClassflowPostService, ErrorClassflow, ResponseClassflow, classflowAPI } from "@services/classflow/classflow";
 import { useEffect, useState } from "react";
 import { notifications } from "@mantine/notifications";
 import { useDisclosure } from "@mantine/hooks";
@@ -10,7 +10,7 @@ import { AutcompleteUsersInvite } from "@features/ui/autocomplete-users.componen
 import { IconCircleMinus } from "@tabler/icons-react"
 
 interface EnrollInfo {
-    email: string
+    idUsers: number[];
 }
 
 interface EnrollClassProps {
@@ -63,17 +63,23 @@ export function EnrollClassClassflow({
     }
     const onFinally = () => {
         setLoading(false);
+        dispatch({
+            type: "unset"
+        })
     }
     const handleSubmit = async () => {
-        // let post = new ClassflowPostService<EnrollInfo, StudentItem, string>("/classes/enroll", {
-        // }, {
-        //     email: form.values.email
-        // });
-        // post.onSend = onSend;
-        // post.onError = onError;
-        // post.onSuccess = onSuccess;
-        // post.onFinally = onFinally;
-        // await classflowAPI.exec(post);
+        if (!students.items)
+            return;
+        let post = new ClassflowPostService<EnrollInfo, StudentItem, string>("/enrollments/create", {
+
+        }, {
+            idUsers: students.items.map(({ id }) => id)
+        });
+        post.onSend = onSend;
+        post.onError = onError;
+        post.onSuccess = onSuccess;
+        post.onFinally = onFinally;
+        await classflowAPI.exec(post);
     }
 
     const handleSelect = (user: StudentItem) => {
@@ -96,7 +102,10 @@ export function EnrollClassClassflow({
                 alignSelf: "end",
                 justifySelf: "end"
             }}>
-                <Button onClick={handleSubmit} loading={loading}>Enviar</Button>
+                <Tooltip label="Selecciona algún usuario" disabled={!(students.items?.length === 0)}>
+                    <Button disabled={students.items?.length === 0} onClick={handleSubmit} loading={loading}>Enviar</Button>
+
+                </Tooltip>
             </Box>
         </Stack>
     </>
@@ -122,13 +131,13 @@ export function ButtonModalEnrollEmail() {
                         width: "50vw"
                     }
                 }}
-                
+
                 size="auto"
                 id="enroll-modal"
                 opened={opened}
                 onClose={close}
 
-                title="Invitar por correo">
+                title="Enviar invitaciones para la clase">
                 <Modal.Body h="70vh" w="100%" style={{ display: "flex" }}>
                     <EnrollClassEmailWrapper close={close} />
                 </Modal.Body>
