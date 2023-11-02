@@ -12,11 +12,12 @@ import VerifyEmail from '@pages/verify-email';
 import { AuthProvider, ROLES } from '@features/auth/auth-context';
 import { PrivateEndpoint } from '@features/auth/auth-private-endpoint';
 import '@mantine/notifications/styles.css';
-import { ClassDetailContext, ClassProvider } from '@features/class/class-detail.context';
-import ClassHeader from '@features/class/class-header.component';
+import { ClassProvider } from '@features/class/class-detail.context';
 import ClassBoard from '@pages/class-board';
-import { InvitationProvider } from '@features/invitations/invitations-list.context';
-import Invitations from '@pages/Invitations';
+import Invitations from '@pages/invitations';
+import CreateNotice from '@pages/notice-create';
+import '@mantine/tiptap/styles.css';
+import NoticeDetail from '@features/notices/notice-detail';
 const router = createBrowserRouter([
   {
     path: "/",
@@ -50,10 +51,33 @@ const router = createBrowserRouter([
           {
             path: ":classId",
             element: <ClassProvider />,
-            children: [{
-              element: <ClassBoard />,
-              index: true
-            }]
+            children: [
+              {
+                element: <ClassBoard />,
+                index: true
+              },
+              {
+                path: "anuncios",
+                children: [
+                  {
+                    index: true,
+                    element: <></>,
+                  },
+                  {
+                    path: "crear",
+                    element: <CreateNotice />
+                  },
+                  {
+                    path: "editar/:noticeId",
+                    element: <CreateNotice />
+                  },
+                  {
+                    path: "ver/:noticeId",
+                    element: <NoticeDetail />
+                  }
+                ]
+              }
+            ]
           }
         ]
       },

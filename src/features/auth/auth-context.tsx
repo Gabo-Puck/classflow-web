@@ -17,6 +17,7 @@ export enum ROLES {
 }
 
 interface User {
+    id: number
     name: string
     profilePic: string
     email: string
@@ -127,6 +128,7 @@ function userReducer(user: User, action: UserAction) {
 }
 
 const initialUser: User = {
+    id: 0,
     name: "",
     profilePic: "",
     role: "",

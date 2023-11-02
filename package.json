@@ -20,6 +20,7 @@
     "@mantine/tiptap": "7.1.2",
     "@tabler/icons-react": "2.36.0",
     "@tiptap/extension-link": "2.1.11",
+    "@tiptap/extension-text-align": "^2.1.12",
     "@tiptap/react": "2.1.11",
     "@tiptap/starter-kit": "2.1.11",
     "axios": "1.5.1",

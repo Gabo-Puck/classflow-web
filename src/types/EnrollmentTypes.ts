@@ -11,11 +11,12 @@ export function getDescriptionStatus(status: EnrollmentStatus) {
         }
         case EnrollmentStatus.ENROLLED: {
             return "Inscrito"
-
         }
         case EnrollmentStatus.DROPOUT: {
             return "De baja"
         }
+        default: {
+            return ""
+        }
     }
-    return "";
 }
