@@ -1,12 +1,12 @@
 import { ClassItem } from '@features/panel/panel-list.context';
 import { Card, Avatar, Text, Progress, Badge, Group, ActionIcon, Button, Tooltip, Stack } from '@mantine/core';
-import { useClassDetail, useClassDetailsDispatch } from './notices-detail.context';
+import { useClassDetail, useClassDetailsDispatch } from '../class/class-detail.context';
 import { useState } from 'react';
 import { ClassflowGetService, ClassflowPostService, ErrorClassflow, ResponseClassflow, classflowAPI } from '@services/classflow/classflow';
 import { notifications } from '@mantine/notifications';
 import { IconRefresh, IconRefreshAlert, IconRefreshDot, IconRefreshOff } from '@tabler/icons-react';
 import { ROLES, useRole } from '@features/auth/auth-context';
-import { ButtonModalEnrollEmail } from './notices-invitation-classflow.component';
+import { ButtonModalEnrollEmail } from './class-invitation-classflow.component';
 
 export default function ClassInvitationModes() {
     const classDetail = useClassDetail();

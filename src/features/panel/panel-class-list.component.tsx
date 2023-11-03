@@ -4,7 +4,7 @@ import { ClassflowGetService, ResponseClassflow, classflowAPI } from "@services/
 import { ROLES, useAuth } from "@features/auth/auth-context";
 import ClassCardStudent from "./panel-class-card-student.component";
 import ClassCardProfessor from "./panel-class-card-professor.component";
-import { Text } from "@mantine/core";
+import { Flex, ScrollArea, Text } from "@mantine/core";
 
 export default function ClassList() {
     const classes = useClasses();
@@ -54,6 +54,10 @@ export default function ClassList() {
         return <Text>Loading...</Text>
     }
     return <>
-        {classes.items.map((c) => userData?.role === ROLES.STUDENT ? <ClassCardStudent item={c} /> : <ClassCardProfessor item={c} />)}
+
+        <Flex w="100%" wrap="wrap" gap="xl" direction="row">
+            {classes.items.map((c) => userData?.role === ROLES.STUDENT ? <ClassCardStudent item={c} /> : <ClassCardProfessor item={c} />)}
+        </Flex>
+
     </>
 }

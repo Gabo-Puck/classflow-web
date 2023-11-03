@@ -65,7 +65,7 @@ export default function ListNotices({ Element }: ListNoticesProps) {
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-between"
-        }} component={Link} to={`anuncios/ver/${element.id}`}>
+        }} component={Link} to={`ver/${element.id}`}>
             <Text>
                 {element.title}
             </Text>

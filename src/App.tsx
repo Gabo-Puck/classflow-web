@@ -18,6 +18,13 @@ import Invitations from '@pages/invitations';
 import CreateNotice from '@pages/notice-create';
 import '@mantine/tiptap/styles.css';
 import NoticeDetail from '@features/notices/notice-detail';
+import ClassflowShell from '@pages/app-shell';
+import Notices from '@pages/Notices';
+import Assignments from '@features/assignments/assignments';
+import Students from '@features/class-members/Students';
+import NoticeTab from '@features/notices/notice-tab';
+import ClassMembersTab from '@features/class-members/class-members-tab';
+import AssignmentsTab from '@features/assignments/assignments-tab';
 const router = createBrowserRouter([
   {
     path: "/",
@@ -34,34 +41,32 @@ const router = createBrowserRouter([
   },
   {
     path: "/app",
-    element: <AuthProvider />,
+    element: <ClassflowShell />,
     children: [
       {
         path: "tablero",
         element: <Panel />,
-        index: true
+        children:[
+          
+        ]
       },
       {
         path: "clase",
         children: [
           {
             path: "crear",
-
           },
           {
             path: ":classId",
-            element: <ClassProvider />,
+            element: <ClassBoard />,
             children: [
               {
-                element: <ClassBoard />,
-                index: true
-              },
-              {
                 path: "anuncios",
+                element: <NoticeTab />,
                 children: [
                   {
                     index: true,
-                    element: <></>,
+                    element: <Notices />,
                   },
                   {
                     path: "crear",
@@ -76,6 +81,14 @@ const router = createBrowserRouter([
                     element: <NoticeDetail />
                   }
                 ]
+              },
+              {
+                path: "integrantes",
+                element: <ClassMembersTab />
+              },
+              {
+                path: "tareas",
+                element: <AssignmentsTab />
               }
             ]
           }

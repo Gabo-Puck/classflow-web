@@ -1,7 +1,7 @@
 import { ClassItem } from '@features/panel/panel-list.context';
 import { Card, Avatar, Text, Progress, Badge, Group, ActionIcon } from '@mantine/core';
 import { IconUpload } from '@tabler/icons-react';
-import { useClassDetail } from './notices-detail.context';
+import { useClassDetail } from '../class/class-detail.context';
 
 
 interface ClassItemProps {
@@ -19,8 +19,8 @@ export default function ClassHeader() {
     if (!classDetail)
         throw new Error("Classheader should be defined inside a ClassContext");
     return (
-        <Card withBorder padding="lg" radius="md">
-            <Text fz="lg" fw={500} mt="md">
+        <Card withBorder padding="md" mt="sm" radius="md">
+            <Text fz="lg" fw={500}>
                 !{classDetail.name}¡
             </Text>
             <Text fz="sm" c="dimmed" mt={5}>

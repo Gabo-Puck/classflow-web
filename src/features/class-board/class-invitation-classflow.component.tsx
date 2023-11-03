@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { notifications } from "@mantine/notifications";
 import { useDisclosure } from "@mantine/hooks";
 import { ROLES, useRole } from "@features/auth/auth-context";
-import { StudentItem, StudentsProvider, useStudents, useStudentsDispatch } from "./class-list-students.context";
-import ListStudents, { ListStudentsProps, ActionsElementProps } from "./class-list-students.component";
+import { StudentItem, StudentsProvider, useStudents, useStudentsDispatch } from "../class/class-list-students.context";
+import ListStudents, { ListStudentsProps, ActionsElementProps } from "../class/class-list-students.component";
 import { AutcompleteUsersInvite } from "@features/ui/autocomplete-users.component";
 import { IconCircleMinus } from "@tabler/icons-react"
 

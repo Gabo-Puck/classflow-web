@@ -12,7 +12,7 @@ export default function NoticesControl() {
     return <>
         <NoticesProvider>
             <Stack>
-                <Button component={Link} to="anuncios/crear" fullWidth>Crear anuncio</Button>
+                <Button component={Link} to="crear" fullWidth>Crear anuncio</Button>
                 <ListNotices />
             </Stack>
         </NoticesProvider>

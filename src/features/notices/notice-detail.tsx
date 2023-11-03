@@ -73,7 +73,7 @@ export default function NoticeDetail() {
                 },
                 onConfirm: () => {
                     modals.closeAll();
-                    navigate("../../")
+                    navigate("../")
                 },
                 confirmProps: {
                     loading: loadingDelete

@@ -4,6 +4,7 @@ import { ClassflowGetService, ClassflowPostService, ErrorClassflow, ResponseClas
 
 import { type Dispatch, createContext, useContext, useReducer, useEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useDisclosure } from '@mantine/hooks';
 
 export enum UserActionKind {
     LOGIN = "LOGIN",
@@ -19,6 +20,7 @@ export enum ROLES {
 interface User {
     id: number
     name: string
+    lastname: string
     profilePic: string
     email: string
     role: ROLES | ""
@@ -42,7 +44,8 @@ export function AuthProvider({ children }: any) {
         initialUser
     );
 
-
+    const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
+    const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
     const [loading, setLoading] = useState(true);
     const onError = (data: ErrorClassflow<string>) => {
         let { pathname, search } = location;
@@ -84,7 +87,7 @@ export function AuthProvider({ children }: any) {
     return (
         <AuthContext.Provider value={tasks}>
             <UserDispatchContext.Provider value={dispatch}>
-                <Outlet />
+                {children}
             </UserDispatchContext.Provider>
         </AuthContext.Provider>
     );
@@ -97,6 +100,25 @@ export function useAuth() {
 }
 export function useRole() {
     return useContext(AuthContext)?.role;
+}
+export function useFullname() {
+    let name = useName();
+    let lastname = useLastname();
+    if (name === undefined || lastname === undefined)
+        return undefined;
+    return `${useName()} ${useLastname()}`;
+}
+export function useName() {
+    return useContext(AuthContext)?.name;
+}
+export function useEmail() {
+    return useContext(AuthContext)?.email;
+}
+export function useLastname() {
+    return useContext(AuthContext)?.lastname;
+}
+export function useProfilePic() {
+    return useContext(AuthContext)?.profilePic;
 }
 
 export function useAuthDispatch() {
@@ -132,5 +154,9 @@ const initialUser: User = {
     name: "",
     profilePic: "",
     role: "",
-    email: ""
+    email: "",
+    lastname: ""
 }
+
+
+

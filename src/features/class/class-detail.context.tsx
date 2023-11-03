@@ -77,7 +77,7 @@ export function ClassProvider({ children }: React.PropsWithChildren) {
 
     return <ClassDetailContext.Provider value={classDetail}>
         <ClassDetailDispatch.Provider value={dispatch}>
-            <Outlet />
+            {children}
         </ClassDetailDispatch.Provider>
     </ClassDetailContext.Provider>
 }

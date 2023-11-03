@@ -15,15 +15,32 @@ const avatars = [
 ];
 
 export default function ClassCardProfessor({ item }: ClassItemProps) {
-    console.log({item});
+    console.log({ item });
     return (
-        <Card 
+        <Card
             withBorder
             padding="lg"
             radius="md"
             component={Link}
-            to={`/app/clase/${item.id}`}
-            w="250px">
+            to={`/app/clase/${item.id}/anuncios`}
+            w={{
+                xl: "15% !important",
+                xml: "20% !important",
+                lg: "22% !important",
+                md: "30% !important",
+                sm: "46% !important",
+                xsm: "100% !important",
+            }}
+            miw={{
+                xl: "14% !important",
+                xml: "19% !important",
+                lg: "22% !important",
+                md: "30% !important",
+                sm: "46% !important",
+                xsm: "100% !important",
+            }}
+            h="225px"
+            >
             <Text fz="lg" fw={500} mt="md">
                 {item.name}
             </Text>
@@ -35,9 +52,6 @@ export default function ClassCardProfessor({ item }: ClassItemProps) {
                 <Text fz="sm" c="dimmed" mt={5}>
                     Students: {`${item._count?.enrolledStudents}`}
                 </Text>
-                <ActionIcon variant="default" size="lg" radius="md">
-                    <IconUpload size="1.1rem" />
-                </ActionIcon>
             </Group>
         </Card>
     );

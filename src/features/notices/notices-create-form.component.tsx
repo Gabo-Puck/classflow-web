@@ -1,25 +1,22 @@
-import { Button, Container, NativeSelect, PasswordInput, ScrollArea, Select, Stack, Text, TextInput } from "@mantine/core";
+import { Button, ScrollArea, Stack, Text, TextInput } from "@mantine/core";
 import { NoticeFormProvider, NoticeFormValues, useNoticeForm } from "./notices-create-form.context";
 import { executeValidations } from "@validations/exec-validations.validator";
-import { validateEmailPattern, validatePasswordPattern } from "@validations/login";
-import { isRequired, matchValues, maxLength, minLength } from "@validations/basic";
+import { isRequired, maxLength } from "@validations/basic";
 import { ClassflowGetService, ClassflowPostService, ResponseClassflow, classflowAPI } from "@services/classflow/classflow";
-import { ROLES, useAuth } from "@features/auth/auth-context";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { JSONContent, useEditor } from "@tiptap/react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEditor } from "@tiptap/react";
 import StarterKit from '@tiptap/starter-kit';
-import { RichTextEditor, Link } from '@mantine/tiptap';
+import { RichTextEditor } from '@mantine/tiptap';
 import { TextAlign } from '@tiptap/extension-text-align';
 import { notifications } from "@mantine/notifications";
+import CatalogTitle from "@features/ui/CatalogTitle";
 
 export default function NoticeForm() {
     const navigate = useNavigate();
     const { noticeId } = useParams();
-    const userData = useAuth();
     const [loading, setLoading] = useState(false);
     const [loadingData, setLoadingData] = useState(false);
-    const [content, setContent] = useState<JSONContent[] | null>(null);
     const editor = useEditor({
         extensions: [
             StarterKit,
@@ -34,7 +31,7 @@ export default function NoticeForm() {
             content: null
         },
         validate: {
-            title: (value, values, path) => executeValidations<string | undefined>(value, [
+            title: (value) => executeValidations<string | undefined>(value, [
                 {
                     validator: isRequired,
                     message: "Campo requerido"
@@ -56,9 +53,7 @@ export default function NoticeForm() {
 
     const onError = () => { }
     const onSuccess = ({ data: { data } }: ResponseClassflow<NoticeFormValues>) => {
-
         form.setFieldValue("title", data.title)
-        setContent(data.content);
         if (data.content)
             editor?.commands.setContent(data.content)
     }
@@ -77,7 +72,7 @@ export default function NoticeForm() {
         const onError = () => { }
         const onSuccess = (data: ResponseClassflow<string>) => {
             console.log("TOKEN", data);
-            navigate("../../");
+            navigate("../");
         }
         const onSend = () => { setLoading(true) }
         const onFinally = () => { setLoading(false) }
@@ -115,6 +110,8 @@ export default function NoticeForm() {
 
         <form onSubmit={form.onSubmit(handleSubmit, (errors) => console.log(errors))}>
             <Stack>
+                <CatalogTitle title={noticeId ? "Editar noticia" : "Crear noticia"} />
+
                 <TextInput
                     label="Titulo"
                     placeholder="El titulo del aviso"

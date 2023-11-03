@@ -4,7 +4,7 @@ import { ClassItem } from "./panel-list.context";
 interface ClassItemProps {
     item: ClassItem
 }
-import { Card, Avatar, Text, Progress, Badge, Group, ActionIcon } from '@mantine/core';
+import { Card, Avatar, Text, Progress, Badge, Group, ActionIcon, Flex } from '@mantine/core';
 import { IconUpload } from '@tabler/icons-react';
 import { Link } from "react-router-dom";
 
@@ -17,13 +17,33 @@ const avatars = [
 export default function ClassCardStudent({ item }: ClassItemProps) {
     console.log({ item });
     return (
-        <Card 
+        <Card
             withBorder
             padding="lg"
             radius="md"
             component={Link}
-            to={`/app/clase/${item.id}`}
-            w="250px">
+            to={`/app/clase/${item.id}/anuncios`}
+            w={{
+                xl: "14% !important",
+                xml: "19% !important",
+                lg: "24% !important",
+                md: "30% !important",
+                sm: "46% !important",
+                xsm: "100% !important",
+            }}
+            miw={{
+                xl: "14% !important",
+                xml: "19% !important",
+                lg: "24% !important",
+                md: "30% !important",
+                sm: "46% !important",
+                xsm: "100% !important",
+            }}
+            h="250px"
+        >
+            <Flex justify="end">
+
+            </Flex>
             <Text fz="lg" fw={500} mt="md">
                 {item.name}
             </Text>
@@ -32,14 +52,10 @@ export default function ClassCardStudent({ item }: ClassItemProps) {
             </Text>
 
             <Group justify="space-between" mt="md">
-
                 <AvatarClassflow img={avatars[0]} />
                 <Text fz="sm" c="dimmed" mt={5}>
                     {`${item.professor.name} ${item.professor.lastname}`}
                 </Text>
-                <ActionIcon variant="default" size="lg" radius="md">
-                    <IconUpload size="1.1rem" />
-                </ActionIcon>
             </Group>
         </Card>
     );
