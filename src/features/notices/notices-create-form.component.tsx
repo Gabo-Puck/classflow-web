@@ -107,7 +107,6 @@ export default function NoticeForm() {
         return <Text>Loading...</Text>
     }
     return <NoticeFormProvider form={form}>
-
         <form onSubmit={form.onSubmit(handleSubmit, (errors) => console.log(errors))}>
             <Stack>
                 <CatalogTitle title={noticeId ? "Editar noticia" : "Crear noticia"} />

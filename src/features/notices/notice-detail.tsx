@@ -13,6 +13,8 @@ import NoticeForm from "./notices-create-form.component";
 import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import Loading from "@features/ui/Loading";
+import UpdateButton from "@features/ui/UpdateButton";
+import DeleteButton from "@features/ui/DeleteButton";
 export default function NoticeDetail() {
     const navigate = useNavigate();
     const { noticeId } = useParams();
@@ -124,16 +126,8 @@ export default function NoticeDetail() {
             <h1>{notice?.title}</h1>
             <Group>
                 {userData?.id === notice?.creatorId && <>
-                    <Tooltip label="Editar">
-                        <ActionIcon color="indigo" component={Link} to={`../editar/${notice.id}`}>
-                            <IconPencil />
-                        </ActionIcon>
-                    </Tooltip>
-                    <Tooltip label="Eliminar">
-                        <ActionIcon color="red" onClick={handleDelete}>
-                            <IconTrashFilled />
-                        </ActionIcon>
-                    </Tooltip>
+                    <UpdateButton onClick={() => navigate(`../editar/${notice.id}`)} />
+                    <DeleteButton onClick={handleDelete} />
                 </>
                 }
             </Group>

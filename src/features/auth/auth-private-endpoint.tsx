@@ -10,6 +10,6 @@ export function PrivateEndpoint({ role, children }: PrivateEndpointProps) {
     if (userData?.role !== role) {
         return <PermissionDenied />
     }
-    return <Outlet/>
+    return <Outlet />
 
 }

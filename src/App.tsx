@@ -25,6 +25,9 @@ import Students from '@features/class-members/Students';
 import NoticeTab from '@features/notices/notice-tab';
 import ClassMembersTab from '@features/class-members/class-members-tab';
 import AssignmentsTab from '@features/assignments/assignments-tab';
+import TermsTemplateControls from '@features/terms-template/terms-template-controls.component';
+import TermsTemplateForm from '@features/terms-template/terms-template-create-form.component';
+import CreateTermTemplate from '@pages/term-template-create';
 const router = createBrowserRouter([
   {
     path: "/",
@@ -46,8 +49,8 @@ const router = createBrowserRouter([
       {
         path: "tablero",
         element: <Panel />,
-        children:[
-          
+        children: [
+
         ]
       },
       {
@@ -112,6 +115,24 @@ const router = createBrowserRouter([
         element: <PrivateEndpoint role={ROLES.STUDENT}>
           <Text>Professor!</Text>
         </PrivateEndpoint>
+      },
+      {
+        path: "parciales",
+        element: <PrivateEndpoint role={ROLES.PROFESSOR} />,
+        children: [
+          {
+            index: true,
+            element: <TermsTemplateControls />
+          },
+          {
+            path: "crear",
+            element: <CreateTermTemplate/>
+          },
+          {
+            path: "editar/:templateId",
+            element: <CreateTermTemplate/>
+          }
+        ]
       },
     ]
   },
