@@ -18,11 +18,13 @@
     "@mantine/modals": "7.1.2",
     "@mantine/notifications": "7.1.2",
     "@mantine/tiptap": "7.1.2",
+    "@mantine/vanilla-extract": "^7.1.2",
     "@tabler/icons-react": "2.36.0",
     "@tiptap/extension-link": "2.1.11",
     "@tiptap/extension-text-align": "^2.1.12",
     "@tiptap/react": "2.1.11",
     "@tiptap/starter-kit": "2.1.11",
+    "@vanilla-extract/css": "^1.13.0",
     "axios": "1.5.1",
     "dayjs": "1.11.10",
     "react": "18.2.0",
@@ -39,6 +41,9 @@
     "eslint": "8.45.0",
     "eslint-plugin-react-hooks": "4.6.0",
     "eslint-plugin-react-refresh": "0.4.3",
+    "postcss": "^8.4.31",
+    "postcss-preset-mantine": "^1.9.1",
+    "postcss-simple-vars": "^7.0.1",
     "typescript": "5.0.2",
     "vite": "4.4.5"
   }

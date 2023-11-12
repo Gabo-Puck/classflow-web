@@ -1,23 +1,42 @@
-import { Button, Modal, PinInput, Stack, Text } from "@mantine/core";
-import { modals } from "@mantine/modals";
-import { ClassflowPostService, ErrorClassflow, ResponseClassflow, classflowAPI } from "@services/classflow/classflow";
-import { useState } from "react";
-import { ClassItem, useClassDispatch, useClasses } from "./panel-list.context";
-import { useForm } from "@mantine/form";
-import { executeValidations } from "@validations/index";
-import { exactLength } from "@validations/basic";
-import { notifications } from "@mantine/notifications";
+import { Button, Grid, Modal, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { ROLES, useRole } from "@features/auth/auth-context";
-import { Link } from "react-router-dom";
+import { ContextModalProps, modals } from "@mantine/modals";
+import SelectModal from "./panel-select-modal.component";
 
 
+const TestModal = ({ context, id, innerProps }: ContextModalProps<{ modalBody: string }>) => (
+    <>
+        <Text size="sm">{innerProps.modalBody}</Text>
+        <Button fullWidth mt="md" onClick={() => context.closeModal(id)}>
+            Close modal
+        </Button>
+    </>
+);
 export function ButtonCreateClass() {
     const role = useRole();
+    const open = () => {
+        modals.open({
+            modalId: "options-modal",
+            title: "Crear clase",
+            children: <SelectModal />,
+            style: {
+                display: "flex",
+                flexDirection: "column"
+            },
+            styles: {
+                content: {
+                    display: "flex",
+                    flexDirection: "column"
+                }
+            }
+        })
+    }
+
+
     return <>
-        {/* render only for professor */}
         {role === ROLES.PROFESSOR && <>
-            <Button component={Link} to="/app/clase/crear">Crear clase</Button>
+            <Button onClick={open}>Crear clase</Button>
         </>
         }
     </>

@@ -8,7 +8,7 @@ import { IName } from 'src/types/Name';
 
 export interface TermTemplate {
     id?: number
-    name?: string;
+    name: string;
     createdAt: string
     updatedAt: string
     sum?: number

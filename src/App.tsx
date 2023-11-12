@@ -1,7 +1,7 @@
 import cx from 'clsx';
 import style from './App.module.css'
 import '@mantine/core/styles.css';
-import { createBrowserRouter, RouterProvider } from "react-router-dom"
+import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom"
 import { Container, createTheme, MantineProvider, Text } from '@mantine/core';
 import { Notifications } from "@mantine/notifications";
 import { ModalsProvider } from "@mantine/modals";
@@ -28,120 +28,7 @@ import AssignmentsTab from '@features/assignments/assignments-tab';
 import TermsTemplateControls from '@features/terms-template/terms-template-controls.component';
 import TermsTemplateForm from '@features/terms-template/terms-template-create-form.component';
 import CreateTermTemplate from '@pages/term-template-create';
-const router = createBrowserRouter([
-  {
-    path: "/",
-    index: true,
-    element: <div>Landing page</div>
-  },
-  {
-    path: "/registrarse",
-    element: <Signup />
-  },
-  {
-    path: "login",
-    element: <Login />,
-  },
-  {
-    path: "/app",
-    element: <ClassflowShell />,
-    children: [
-      {
-        path: "tablero",
-        element: <Panel />,
-        children: [
-
-        ]
-      },
-      {
-        path: "clase",
-        children: [
-          {
-            path: "crear",
-          },
-          {
-            path: ":classId",
-            element: <ClassBoard />,
-            children: [
-              {
-                path: "anuncios",
-                element: <NoticeTab />,
-                children: [
-                  {
-                    index: true,
-                    element: <Notices />,
-                  },
-                  {
-                    path: "crear",
-                    element: <CreateNotice />
-                  },
-                  {
-                    path: "editar/:noticeId",
-                    element: <CreateNotice />
-                  },
-                  {
-                    path: "ver/:noticeId",
-                    element: <NoticeDetail />
-                  }
-                ]
-              },
-              {
-                path: "integrantes",
-                element: <ClassMembersTab />
-              },
-              {
-                path: "tareas",
-                element: <AssignmentsTab />
-              }
-            ]
-          }
-        ]
-      },
-      {
-        path: "invitaciones",
-        element: (
-          <PrivateEndpoint role={ROLES.STUDENT} />
-        ),
-        children: [
-          {
-            index: true,
-            element: <Invitations />
-          }
-        ]
-
-      },
-      {
-        path: "professor",
-        element: <PrivateEndpoint role={ROLES.STUDENT}>
-          <Text>Professor!</Text>
-        </PrivateEndpoint>
-      },
-      {
-        path: "parciales",
-        element: <PrivateEndpoint role={ROLES.PROFESSOR} />,
-        children: [
-          {
-            index: true,
-            element: <TermsTemplateControls />
-          },
-          {
-            path: "crear",
-            element: <CreateTermTemplate/>
-          },
-          {
-            path: "editar/:templateId",
-            element: <CreateTermTemplate/>
-          }
-        ]
-      },
-    ]
-  },
-  {
-    path: "validate",
-    element: <VerifyEmail />
-  }
-
-])
+import CreateClass from '@pages/create-class';
 const theme = createTheme({
   components: {
     Container: Container.extend({
@@ -151,16 +38,138 @@ const theme = createTheme({
     }),
   },
 });
+const router = createBrowserRouter([
+  {
+    path: "",
+    element: <>
+      <MantineProvider defaultColorScheme='dark' theme={theme}>
+        <ModalsProvider>
+          <Outlet />
+          <Notifications position='bottom-right' />
+        </ModalsProvider>
+      </MantineProvider>
+    </>,
+    children: [
+      {
+        path: "/",
+        element: <div>Landing page</div>
+      },
+
+      {
+        path: "/registrarse",
+        element: <Signup />
+      },
+      {
+        path: "login",
+        element: <Login />,
+      },
+      {
+        path: "/app",
+        element: <ClassflowShell />,
+        children: [
+          {
+            path: "tablero",
+            element: <Panel />,
+            children: [
+
+            ]
+          },
+          {
+            path: "clase",
+            children: [
+              {
+                path: "crear",
+                element: <CreateClass/>
+              },
+              {
+                path: ":classId",
+                element: <ClassBoard />,
+                children: [
+                  {
+                    path: "anuncios",
+                    element: <NoticeTab />,
+                    children: [
+                      {
+                        index: true,
+                        element: <Notices />,
+                      },
+                      {
+                        path: "crear",
+                        element: <CreateNotice />
+                      },
+                      {
+                        path: "editar/:noticeId",
+                        element: <CreateNotice />
+                      },
+                      {
+                        path: "ver/:noticeId",
+                        element: <NoticeDetail />
+                      }
+                    ]
+                  },
+                  {
+                    path: "integrantes",
+                    element: <ClassMembersTab />
+                  },
+                  {
+                    path: "tareas",
+                    element: <AssignmentsTab />
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            path: "invitaciones",
+            element: (
+              <PrivateEndpoint role={ROLES.STUDENT} />
+            ),
+            children: [
+              {
+                index: true,
+                element: <Invitations />
+              }
+            ]
+
+          },
+          {
+            path: "professor",
+            element: <PrivateEndpoint role={ROLES.STUDENT}>
+              <Text>Professor!</Text>
+            </PrivateEndpoint>
+          },
+          {
+            path: "parciales",
+            element: <PrivateEndpoint role={ROLES.PROFESSOR} />,
+            children: [
+              {
+                index: true,
+                element: <TermsTemplateControls />
+              },
+              {
+                path: "crear",
+                element: <CreateTermTemplate />
+              },
+              {
+                path: "editar/:templateId",
+                element: <CreateTermTemplate />
+              }
+            ]
+          },
+        ]
+      },
+      {
+        path: "validate",
+        element: <VerifyEmail />
+      }
+    ]
+  },
+
+])
+
 function App() {
   return (
-    <MantineProvider defaultColorScheme='dark' theme={theme}>
-      <ModalsProvider>
-
-        <RouterProvider router={router} />
-        <Notifications position='bottom-right' />
-      </ModalsProvider>
-    </MantineProvider >
-
+    <RouterProvider router={router} />
   )
 }
 

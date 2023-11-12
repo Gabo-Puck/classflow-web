@@ -47,11 +47,11 @@ export default function TermsTemplateForm({ }) {
         post.onSuccess = onSuccess;
         await classflowAPI.exec(post);
     }
-    const onSave = () => {
+    const onSave = async () => {
         if (templateId) {
-            update();
+            await update();
         } else {
-            create();
+            await create();
         }
     }
     const fetch = async () => {
