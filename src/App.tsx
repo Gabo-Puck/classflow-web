@@ -29,6 +29,7 @@ import TermsTemplateControls from '@features/terms-template/terms-template-contr
 import TermsTemplateForm from '@features/terms-template/terms-template-create-form.component';
 import CreateTermTemplate from '@pages/term-template-create';
 import CreateClass from '@pages/create-class';
+import CreateFormTemplate from '@pages/form-template-create';
 const theme = createTheme({
   components: {
     Container: Container.extend({
@@ -149,6 +150,24 @@ const router = createBrowserRouter([
               {
                 path: "crear",
                 element: <CreateTermTemplate />
+              },
+              {
+                path: "editar/:templateId",
+                element: <CreateTermTemplate />
+              }
+            ]
+          },
+          {
+            path: "formularios",
+            element: <PrivateEndpoint role={ROLES.PROFESSOR} />,
+            children: [
+              {
+                index: true,
+                element: <TermsTemplateControls />
+              },
+              {
+                path: "crear",
+                element: <CreateFormTemplate />
               },
               {
                 path: "editar/:templateId",
