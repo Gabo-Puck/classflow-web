@@ -30,6 +30,8 @@ import TermsTemplateForm from '@features/terms-template/terms-template-create-fo
 import CreateTermTemplate from '@pages/term-template-create';
 import CreateClass from '@pages/create-class';
 import CreateFormTemplate from '@pages/form-template-create';
+import FormTemplateList from '@features/forms-template/forms-template-list.component';
+import FormsTemplateControls from '@features/forms-template/forms-template-controls.component';
 const theme = createTheme({
   components: {
     Container: Container.extend({
@@ -163,7 +165,7 @@ const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <TermsTemplateControls />
+                element: <FormsTemplateControls />
               },
               {
                 path: "crear",
@@ -171,7 +173,7 @@ const router = createBrowserRouter([
               },
               {
                 path: "editar/:templateId",
-                element: <CreateTermTemplate />
+                element: <CreateFormTemplate />
               }
             ]
           },

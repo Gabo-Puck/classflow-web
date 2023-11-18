@@ -1,4 +1,4 @@
-import { ActionIcon, Button, Card, Checkbox, Flex, Grid, Group, Menu, NumberInput, ScrollArea, Stack, TextInput, Title, rem } from "@mantine/core";
+import { ActionIcon, Alert, Button, Card, Checkbox, Flex, Grid, Group, Menu, NumberInput, ScrollArea, Stack, Text, TextInput, Title, Tooltip, rem } from "@mantine/core";
 import { FormTemplateBody, useFormTemplateFormContext, useFormTemplateHandlers } from "./forms-template-form.context"
 import { PropsWithChildren, memo, useEffect, useMemo, useState } from "react";
 import { useShallowEffect } from "@mantine/hooks";
@@ -8,7 +8,7 @@ import { QuestionTypes } from "src/types/QuestionTypes";
 import { Question } from 'src/types/Question';
 import { CreateClosedQuestionAnswers } from "./forms-template-create-closed";
 import { CreateMultipleQuestionAnswers } from "./forms-template-create-multiple";
-import { IconDotsVertical } from "@tabler/icons-react";
+import { IconAlertCircle, IconDotsVertical } from "@tabler/icons-react";
 import { IconTrash } from "@tabler/icons-react";
 
 interface QuestionWrapperProps {
@@ -39,6 +39,12 @@ function QuestionWrapper({ index }: QuestionWrapperProps) {
         let questionError = form.errors[`questions.${index}.question`]?.toString();
         if (questionError !== undefined)
             errors.push(questionError);
+        let answerValidatedclosed = form.errors[`questions.${index}.answersValidateClosed`]?.toString();
+        if (answerValidatedclosed !== undefined)
+            errors.push(answerValidatedclosed);
+        let answerValidatedMultiple = form.errors[`questions.${index}.answersValidateMultiple`]?.toString();
+        if (answerValidatedMultiple !== undefined)
+            errors.push(answerValidatedMultiple);
     }
     const getOption = () => {
         switch (element.payload.type) {
@@ -66,8 +72,23 @@ function QuestionWrapper({ index }: QuestionWrapperProps) {
 function QuestionComponent({ form, index, handleDeleteQuestion }: QuestionProps) {
     console.log(`QuestionComponent ${index} was rendered at`, new Date().toLocaleTimeString());
     return <Stack my="sm">
+        {form.errors[`questions.${index}.answersValidateClosed`] && <Alert variant="light" color="orange.5" title="Atención" icon={<IconAlertCircle />}>
+            {form.errors[`questions.${index}.answersValidateClosed`]}
+        </Alert>}
+        {form.errors[`questions.${index}.answersValidateMultiple`] && <Alert variant="light" color="orange.5" title="Atención" icon={<IconAlertCircle />}>
+            {form.errors[`questions.${index}.answersValidateMultiple`]}
+        </Alert>}
+        {form.errors[`questions.${index}.answersValidate`] && <Alert variant="light" color="orange.5" title="Atención" icon={<IconAlertCircle />}>
+            {form.errors[`questions.${index}.answersValidate`]}
+        </Alert>}
         <Group justify="space-between">
-            <Title order={3}>{`Pregunta ${index + 1}`}</Title>
+            <Flex align="baseline" gap="xs">
+                <Title order={3}>{`Pregunta ${index + 1}`}</Title>
+                {
+                    form.values.questions[index].payload.type === QuestionTypes.FILE &&
+                    <Text c="gray.5" size="sm">5mb max</Text>
+                }
+            </Flex>
             <Menu withinPortal={false} shadow="md" width={200} closeOnItemClick={false}>
                 <Menu.Target>
                     <ActionIcon variant="subtle">
@@ -84,7 +105,7 @@ function QuestionComponent({ form, index, handleDeleteQuestion }: QuestionProps)
                                     flex: 1
                                 }
                             }}
-                            label="Correcta"
+                            label="Obligatoria"
                             {...form.getInputProps(`questions.${index}.required`, {
                                 type: "checkbox"
                             })}
@@ -134,8 +155,8 @@ interface CreateTermDetails extends PropsWithChildren {
 export default function CreateFormDetails({ children, onSave, hasErrors = () => false }: CreateTermDetails) {
     const form = useFormTemplateFormContext();
     const { handleAddQuestion } = useFormTemplateHandlers();
-    const [sum, setSum] = useState<number>(0);
     const [loading, setLoading] = useState(false);
+    const [disableFileQuestion, setDisableFileQuestion] = useState<boolean>(false);
     useEffect(() => {
         console.log({ values: form.values });
     }, [form.values])
@@ -164,9 +185,8 @@ export default function CreateFormDetails({ children, onSave, hasErrors = () => 
         }
     }
     useShallowEffect(() => {
-        let s = form.values.questions.reduce(
-            (acc, curr) => acc + Number(curr.value), 0);
-        setSum(s);
+        let count = form.values.questions.filter(({ payload: { type } }) => type === QuestionTypes.FILE).length;
+        setDisableFileQuestion(count >= 5);
     }, [form.values.questions])
     return <>
         <Flex direction="column" h="100%">
@@ -180,8 +200,11 @@ export default function CreateFormDetails({ children, onSave, hasErrors = () => 
                     {children}
                     <Flex justify="space-between">
                         <Menu trigger="hover">
+
                             <Menu.Target>
-                                <Button>Agregar pregunta</Button>
+                                <Button onClick={handleSubmit} loading={loading} disabled={
+                                    form.values.questions.length >= 15
+                                }>Agregar una pregunta</Button>
                             </Menu.Target>
                             <Menu.Dropdown>
                                 <Menu.Item onClick={() => handleAddQuestion(QuestionTypes.OPEN)}>
@@ -193,21 +216,29 @@ export default function CreateFormDetails({ children, onSave, hasErrors = () => 
                                 <Menu.Item onClick={() => handleAddQuestion(QuestionTypes.MULTIPLE)}>
                                     Múltiple
                                 </Menu.Item>
-                                <Menu.Item onClick={() => handleAddQuestion(QuestionTypes.FILE)}>
+
+                                <Menu.Item disabled={disableFileQuestion} onClick={() => handleAddQuestion(QuestionTypes.FILE)}>
                                     Archivo
+                                    {disableFileQuestion && < Text size="xs">
+                                        5 preguntas máximo
+                                    </Text>}
                                 </Menu.Item>
+
                             </Menu.Dropdown>
                         </Menu>
-                        {/* <Button onClick={handleAdd}>Agregar pregunta</Button> */}
                     </Flex>
                     {fields}
                 </Stack>
             </ScrollArea>
             <Flex py="sm" justify="end">
-                <Button onClick={handleSubmit} loading={loading} disabled={
-                    form.values.questions.length === 0
-                }>Guardar</Button>
+                <Tooltip
+                    label="Crea mínimo dos preguntas"
+                    disabled={form.values.questions.length >= 2}>
+                    <Button onClick={handleSubmit} loading={loading} disabled={
+                        form.values.questions.length < 2
+                    }>Guardar</Button>
+                </Tooltip>
             </Flex>
-        </Flex>
+        </Flex >
     </>
 }

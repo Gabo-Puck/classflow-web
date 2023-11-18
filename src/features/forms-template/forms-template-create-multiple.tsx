@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { Question } from "src/types/Question";
 import { useFormTemplateFormContext, useFormTemplateHandlers } from "./forms-template-form.context";
-import { Button, Flex, Title } from "@mantine/core";
+import { Button, Flex, Title, Tooltip } from "@mantine/core";
 import { QuestionTypes } from "src/types/QuestionTypes";
 import { CreateFormAnswerMemoized } from "./form-template-create-answer";
 
@@ -58,7 +58,16 @@ export function CreateMultipleQuestionAnswers({ index }: CreateMultipleQuestionP
     return <>
         <Flex justify="space-between" align="center">
             <Title order={5}>Respuestas</Title>
-            <Button onClick={() => handleAddAnswer(index)}>Agregar</Button>
+            <Tooltip
+                label="Máximo 15 respuestas"
+                disabled={question.payload.data.length < 15}>
+                <Button
+                    disabled={question.payload.data.length >= 15}
+                    onClick={() => handleAddAnswer(index)}
+                >
+                    Agregar
+                </Button>
+            </Tooltip>
 
         </Flex>
         {fields}

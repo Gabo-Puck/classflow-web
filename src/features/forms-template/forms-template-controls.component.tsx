@@ -1,10 +1,10 @@
 import { TermTemplatesProvider } from "./forms-template-list.context";
-import TermsTemplateList from "./forms-template-list.component";
+import FormTemplateList from "./forms-template-list.component";
 import { Box, Button, Group, ScrollArea, Stack, Title } from "@mantine/core";
 import { Link } from "react-router-dom";
 
 
-export default function TermsTemplateControls() {
+export default function FormsTemplateControls() {
     return <TermTemplatesProvider>
         <Stack pt="sm" h="100%">
             <div style={{ flex: 0 }}>
@@ -23,7 +23,7 @@ export default function TermsTemplateControls() {
                 }
             }}>
 
-                <TermsTemplateList />
+                <FormTemplateList />
             </ScrollArea>
         </Stack>
     </TermTemplatesProvider>

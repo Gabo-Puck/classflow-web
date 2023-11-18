@@ -12,7 +12,7 @@ import { ClassflowGetService, ClassflowPostService, ClassflowPutService, ErrorCl
 import { notifications } from "@mantine/notifications";
 import { useEffect, useState } from "react";
 
-export default function TermsTemplateForm({ }) {
+export default function FormTemplateForm({ }) {
     const { templateId } = useParams();
     const form = useFormTemplate({ id: templateId !== undefined ? Number(templateId) : undefined });
     const navigate = useNavigate();
@@ -29,7 +29,7 @@ export default function TermsTemplateForm({ }) {
             console.log("TOKEN", data);
             navigate("../");
         }
-        let url = "/term-templates/create";
+        let url = "/form-templates/create";
         let post = new ClassflowPostService<FormTemplateBody, string, string>(url, {}, form.getTransformedValues());
         post.onError = onError;
         post.onSuccess = onSuccess;
@@ -41,7 +41,7 @@ export default function TermsTemplateForm({ }) {
             console.log("TOKEN", data);
             navigate("../");
         }
-        let url = "/term-templates/edit";
+        let url = "/form-templates/edit";
         let post = new ClassflowPutService<FormTemplateBody, string, string>(url, {}, form.getTransformedValues());
         post.onError = onError;
         post.onSuccess = onSuccess;
@@ -68,7 +68,7 @@ export default function TermsTemplateForm({ }) {
                 // form.setInitialValues({ ...form.values, ...data })
                 form.setValues(data);
             }
-            let url = `/term-templates/${templateId}`;
+            let url = `/form-templates/${templateId}`;
             let post = new ClassflowGetService<string, FormTemplateBody, string>(url, {});
             post.onError = onError;
             post.onSuccess = onSuccess;

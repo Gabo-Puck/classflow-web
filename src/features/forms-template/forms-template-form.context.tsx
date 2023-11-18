@@ -11,7 +11,10 @@ import { QuestionTypes } from 'src/types/QuestionTypes';
 
 
 interface QuestionBody extends Question {
+    answersValidateClosed?: any
     answersValidate?: any
+    answersValidateMultiple?: any
+    answersValidateMax?: any
 }
 
 export interface FormTemplate {
@@ -66,6 +69,36 @@ export const useFormTemplate = ({ id = undefined, skipTitle = false }: useFormTe
                         message: "Ingresa la pregunta"
                     }
                 ]),
+                answersValidateMultiple: (value, values, path) => executeValidations(value, [
+                    {
+                        validator: (value) => {
+                            //validate option based questions
+                            let p = path.split(".");
+                            p.pop();
+                            let obj = getValueByProp(values, p.join(".")) as Question;
+                            if (obj.payload.type !== QuestionTypes.MULTIPLE)
+                                return true;
+                            return obj.payload.data.filter((p) => p.correct).length > 0;
+
+                        },
+                        message: "Debes marcar por lo menos una respuesta como correcta"
+                    }
+                ]),
+                answersValidateClosed: (value, values, path) => executeValidations(value, [
+                    {
+                        validator: (value) => {
+                            //validate option based questions
+                            let p = path.split(".");
+                            p.pop();
+                            let obj = getValueByProp(values, p.join(".")) as Question;
+                            if (obj.payload.type !== QuestionTypes.CLOSED)
+                                return true;
+                            return obj.payload.data.filter((p) => p.correct).length === 1;
+
+                        },
+                        message: "Debes marcar solo una respuesta como correcta"
+                    }
+                ]),
                 answersValidate: (value, values, path) => executeValidations(value, [
                     {
                         validator: (value) => {
@@ -73,14 +106,18 @@ export const useFormTemplate = ({ id = undefined, skipTitle = false }: useFormTe
                             let p = path.split(".");
                             p.pop();
                             let obj = getValueByProp(values, p.join(".")) as Question;
+                            console.log({ obj });
                             if (obj.payload.type !== QuestionTypes.CLOSED && obj.payload.type !== QuestionTypes.MULTIPLE)
                                 return true;
-                            return obj.payload.data.length < 2;
+                            let length = obj.payload.data.length;
+                            console.log({ length });
+                            return obj.payload.data.length >= 2;
 
                         },
                         message: "Agrega por lo menos dos respuestas posibles"
-                    }
+                    },
                 ]),
+
                 payload: {
                     data: {
                         value: (value) => executeValidations(value, [
@@ -95,20 +132,14 @@ export const useFormTemplate = ({ id = undefined, skipTitle = false }: useFormTe
         },
         transformValues: (values) => ({
             ...values,
-            // questions: values.questions.map((t) => ({
-            //     ...t,
-            //     sum: undefined,
-            //     id: undefined,
-            //     value: Number(t.value),
-            //     termTemplateId: undefined,
-            //     termTemplateDetailsCategories: t.termTemplateDetailsCategories.map((d) => ({
-            //         ...d,
-            //         id: undefined,
-            //         termTemplateDetailsId: undefined,
-
-            //         value: Number(d.value)
-            //     }))
-            // }))
+            questions: values.questions.map((t) => ({
+                ...t,
+                answersValidateClosed: undefined,
+                answersValidate: undefined,
+                answersValidateMultiple: undefined,
+                questionValidate: undefined,
+                answersValidateMax: undefined
+            }))
         })
     });
     return form;

@@ -38,8 +38,8 @@ export function NavbarNested() {
         {
             label: 'Plantillas formulario',
             icon: IconGauge,
-            link: "/app/formulario",
-            active: location.pathname.includes("/app/formulario"),
+            link: "/app/formularios",
+            active: location.pathname.includes("/app/formularios"),
             show: role === ROLES.PROFESSOR
         },
         {

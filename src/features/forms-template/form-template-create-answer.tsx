@@ -1,9 +1,10 @@
 import { UseFormReturnType } from "@mantine/form"
 import { memo } from "react"
 import { FormTemplateBody, useFormTemplateHandlers } from "./forms-template-form.context"
-import { ActionIcon, Box, Button, Card, Checkbox, Grid, Group, Menu, NumberInput, Stack, Text, TextInput, Title, Tooltip, rem } from "@mantine/core"
+import { ActionIcon, Alert, Box, Button, Card, Checkbox, Grid, Group, Menu, NumberInput, Stack, Text, TextInput, Title, Tooltip, rem } from "@mantine/core"
 import { IconArrowsLeftRight, IconCircle, IconDots, IconDotsVertical, IconSettings, IconSquare, IconTrash } from "@tabler/icons-react"
 import { OptionBasedQuestion, QuestionTypes } from "src/types/QuestionTypes"
+import { IconAlertCircle } from "@tabler/icons-react"
 
 
 
@@ -19,9 +20,10 @@ interface CraeteFormAnswerProps {
 function CreateFormAnswer({ handleDeleteAnswer, form, parentIndex, index, value, error, type }: CraeteFormAnswerProps) {
     let question = form.values.questions[parentIndex].payload;
     if (question.type !== QuestionTypes.CLOSED && question.type !== QuestionTypes.MULTIPLE)
-        throw new Error("CreateClosedQuestionAnswer should use a QuestionType of type closed")
+        throw new Error("CreateFormAnswer should use a QuestionType of type closed")
     console.log(`CreateFormAnser from ${parentIndex} at ${index} was rendered at ${new Date().toLocaleString()}`);
     return <>
+       
         <TextInput
             withAsterisk
             label=""

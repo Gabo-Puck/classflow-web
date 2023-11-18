@@ -11,7 +11,7 @@ import { modals } from "@mantine/modals";
 import DeleteTemplate from "./forms-template-delete.component";
 import { useDisclosure } from "@mantine/hooks";
 
-export default function TermTemplateTable() {
+export default function FormTemplateList() {
     const termTemplates = useTemplates();
     const filter = useQuery();
     const dispatch = useClassDispatch();
@@ -24,7 +24,7 @@ export default function TermTemplateTable() {
         alert("algo a salido mal");
     }
     if (!termTemplates || !dispatch)
-        throw new Error("TermTemplateTable should be defined as children of TermTemplatesProvider")
+        throw new Error("FormTemplateTable should be defined as children of TermTemplatesProvider")
     const { items } = termTemplates;
     const onSuccess = ({ data, status }: ResponseClassflow<FormTemplateListItem[]>) => {
         dispatch({
@@ -39,7 +39,7 @@ export default function TermTemplateTable() {
         setLoading(false);
     }
     const getTemplates = async () => {
-        let url = "/term-templates";
+        let url = "/form-templates";
         let get = new ClassflowGetService<null, FormTemplateListItem[], string>(url, {});
         get.onSend = onSend;
         get.onError = onError;

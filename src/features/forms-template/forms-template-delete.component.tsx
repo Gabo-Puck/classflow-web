@@ -17,7 +17,7 @@ export default function DeleteTemplate({ id, close, opened, onClose }: DeletePro
     const [loading, setLoading] = useState(false);
     const dispatch = useClassDispatch();
     if (!dispatch)
-        throw new Error("TermTemplateTable should be defined as children of TermTemplatesProvider")
+        throw new Error("FormTemplateTable should be defined as children of TermTemplatesProvider")
     const deleteTemplate = async () => {
         const onError = (error: ErrorClassflow<string>) => {
             notifications.show({
@@ -38,7 +38,7 @@ export default function DeleteTemplate({ id, close, opened, onClose }: DeletePro
         }
         const onSend = () => { setLoading(true) }
         const onFinally = () => { setLoading(false) }
-        let del = new ClassflowDeleteService<{}, FormTemplate, string>(`/term-templates/${id}`, {});
+        let del = new ClassflowDeleteService<{}, FormTemplate, string>(`/form-templates/${id}`, {});
         del.onSend = onSend;
         del.onError = onError;
         del.onSuccess = onSuccess;

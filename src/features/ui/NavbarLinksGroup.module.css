@@ -15,11 +15,11 @@
   }
 }
 .control:hover {
-  background-color: #6569a844;
+  background-color: #6569a844 !important;
   color: light-dark(var(--mantine-color-black), var(--mantine-color-dark-0));
 }
-.active {
-  background-color: #8285c244;
+.active,.active:hover {
+  background-color: #8285c244 !important;
 }
 .hide {
   display: none;
