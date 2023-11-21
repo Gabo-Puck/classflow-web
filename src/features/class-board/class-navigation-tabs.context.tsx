@@ -5,11 +5,13 @@ import { createContext, useReducer, useContext, useState } from "react";
 //create context for state's form
 interface TabsState {
     activeTab: string | null
+    path: string | null
 }
 
 type ClassTabState = TabsState;
 const initialState: ClassTabState = {
-    activeTab: null
+    activeTab: null,
+    path: null
 }
 export const TabsStateContext = createContext<ClassTabState>(initialState);
 //Create a provider to access both, state and dispatch actions
@@ -31,9 +33,9 @@ export function useTabsClassBoard() {
 }
 
 //define which actions can be perform in the reducer
-type Anuncios = { type: 'anuncios'; payload: "anuncios" };
-type Integrantes = { type: 'integrantes'; payload: "integrantes" };
-type Tareas = { type: 'tareas'; payload: "tareas" };
+type Anuncios = { type: 'anuncios'; payload: "anuncios", path: string };
+type Integrantes = { type: 'integrantes'; payload: "integrantes", path: string };
+type Tareas = { type: 'tareas'; payload: "tareas", path: string };
 export type TabsAction = Anuncios | Integrantes | Tareas;
 
 //create context for dispatch
@@ -47,7 +49,8 @@ export function classDetailsReducer(classDetails: ClassTabState | null, action: 
         case 'tareas':
             return {
                 ...classDetails,
-                activeTab: action.payload
+                activeTab: action.payload,
+                path: action.path
             };
         default: {
             console.error("Unknown action: ", action);

@@ -15,7 +15,7 @@ function Classflow() {
     }
     return (
         <AppShell
-
+            mah="100vh"
             navbar={{
                 width: 300,
                 breakpoint: 'sm',

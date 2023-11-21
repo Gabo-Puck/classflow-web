@@ -12,6 +12,7 @@ import VerifyEmail from '@pages/verify-email';
 import { AuthProvider, ROLES } from '@features/auth/auth-context';
 import { PrivateEndpoint } from '@features/auth/auth-private-endpoint';
 import '@mantine/notifications/styles.css';
+import '@mantine/dates/styles.css';
 import { ClassProvider } from '@features/class/class-detail.context';
 import ClassBoard from '@pages/class-board';
 import Invitations from '@pages/invitations';
@@ -32,6 +33,7 @@ import CreateClass from '@pages/create-class';
 import CreateFormTemplate from '@pages/form-template-create';
 import FormTemplateList from '@features/forms-template/forms-template-list.component';
 import FormsTemplateControls from '@features/forms-template/forms-template-controls.component';
+import AssignmentCreate from '@pages/assingment-create';
 const theme = createTheme({
   components: {
     Container: Container.extend({
@@ -116,7 +118,13 @@ const router = createBrowserRouter([
                   },
                   {
                     path: "tareas",
-                    element: <AssignmentsTab />
+                    element: <AssignmentsTab />,
+                    children:[
+                      {
+                        path:"crear",
+                        element: <AssignmentCreate/>
+                      }
+                    ]
                   }
                 ]
               }

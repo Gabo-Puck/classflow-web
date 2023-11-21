@@ -14,13 +14,20 @@ import { TabsProvider } from "@features/class-board/class-navigation-tabs.contex
 export default function ClassBoard() {
     return <ClassProvider>
         <TabsProvider>
-            <Stack h="100vh" w="100%" justify="start" p="sm">
+            <Stack mah="100vh" h="100vh" w="100%" justify="start" p="sm">
                 <div style={{
                     flex: 0
                 }}>
                     <NavigationTabs />
                     <ClassHeader />
                 </div>
+                {/* <div style={{
+                    flex: 1,
+                    height:"1px"
+                }}>
+                    <ScrollArea.Autosize mah="100%">
+                    </ScrollArea.Autosize>
+                </div> */}
                 <Outlet />
             </Stack>
         </TabsProvider>

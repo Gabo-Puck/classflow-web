@@ -149,10 +149,11 @@ function QuestionComponent({ form, index, handleDeleteQuestion }: QuestionProps)
 interface CreateTermDetails extends PropsWithChildren {
     onSave: VoidFunction;
     hasErrors?(): boolean;
+    delegateSave?: boolean;
 }
 
 
-export default function CreateFormDetails({ children, onSave, hasErrors = () => false }: CreateTermDetails) {
+export default function CreateFormDetails({ children, delegateSave = false, onSave = () => { }, hasErrors = () => false }: CreateTermDetails) {
     const form = useFormTemplateFormContext();
     const { handleAddQuestion } = useFormTemplateHandlers();
     const [loading, setLoading] = useState(false);
@@ -171,6 +172,7 @@ export default function CreateFormDetails({ children, onSave, hasErrors = () => 
         , [form.values.questions.length])
 
     const handleSubmit = async () => {
+        if (delegateSave) return;
         let errors = form.validate();
         let errorsParent = hasErrors();
         if (!errors.hasErrors && !errorsParent) {
@@ -230,7 +232,7 @@ export default function CreateFormDetails({ children, onSave, hasErrors = () => 
                     {fields}
                 </Stack>
             </ScrollArea>
-            <Flex py="sm" justify="end">
+            {!delegateSave && <Flex py="sm" justify="end">
                 <Tooltip
                     label="Crea mínimo dos preguntas"
                     disabled={form.values.questions.length >= 2}>
@@ -238,7 +240,7 @@ export default function CreateFormDetails({ children, onSave, hasErrors = () => 
                         form.values.questions.length < 2
                     }>Guardar</Button>
                 </Tooltip>
-            </Flex>
+            </Flex>}
         </Flex >
     </>
 }
