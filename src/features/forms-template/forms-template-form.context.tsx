@@ -24,6 +24,7 @@ export interface FormTemplate {
     updatedAt: string
     questionValidate?: any;
     questions: QuestionBody[];
+    assignmentId?: number
 }
 
 export type FormTemplateBody = Omit<FormTemplate, "createdAt" | "updatedAt">

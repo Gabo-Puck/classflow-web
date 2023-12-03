@@ -1,23 +1,28 @@
-import { ActionIcon, Button, Flex, Group, InputLabel, Text, TextInput, rem } from "@mantine/core";
+import { ActionIcon, Alert, Button, Flex, Group, InputLabel, Text, TextInput, Title, rem } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { Dropzone, DropzoneProps, FileWithPath, MIME_TYPES } from "@mantine/dropzone"
-import { IconCross, IconDownload, IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
+import { IconAlertCircle, IconCross, IconDownload, IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
 import { SetStateAction, useState } from "react";
+import { notifications } from "@mantine/notifications";
 export interface FileItem {
+    file: FileData
+}
+export interface FileData {
     type: string;
     filename: string;
+    ext: string;
     base64?: string;
     path?: string;
     id?: number;
 }
-
+const classflowAPI = import.meta.env.VITE_CLASS_FLOW_API;
 export interface FileListProps {
     list: FileItem[]
     setList: React.Dispatch<SetStateAction<FileItem[]>>
 }
 
 interface FileModalProps {
-    onSave: (file: FileItem) => void
+    onSave: (file: FileData) => void
 }
 
 const toBase64 = (file: Blob): Promise<string | ArrayBuffer | null> => new Promise((resolve, reject) => {
@@ -29,17 +34,26 @@ const toBase64 = (file: Blob): Promise<string | ArrayBuffer | null> => new Promi
 function ModalFiles({ onSave }: FileModalProps) {
     const [disabled, setDisabled] = useState(true);
     const [filename, setFilename] = useState("");
-    const [file, setFile] = useState<FileItem | null>(null);
+    const [file, setFile] = useState<FileData | null>(null);
     const handleDrop = async (file: FileWithPath[]) => {
         let f = file[0];
-        const fl = await toBase64(f);
-        setFile({
-            filename: "",
-            type: "create",
-            base64: fl?.toString().split(",", 2)[1],
-        })
-        setFilename(f.name);
-        setDisabled(false);
+        try {
+            const fl = await toBase64(f);
+            setFile({
+                filename: "",
+                type: "create",
+                base64: fl?.toString().split(",", 2)[1],
+                ext: f.type.split("/")[1]
+            })
+            setFilename(f.name);
+            setDisabled(false);
+        } catch (error) {
+            notifications.show({
+                message: "Algo ha salido mal con tu archivo. Asegurate que no este corrupto o exista en tu equipo",
+                color: "orange"
+            })
+            console.log(error);
+        }
     }
     const handleSave = () => {
         if (file !== null) {
@@ -90,7 +104,7 @@ function ModalFiles({ onSave }: FileModalProps) {
             </Group>
         </Dropzone>
         <Button
-            disabled={file == null || filename == ""}
+            disabled={file == null || filename == "" || /\.$/.test(filename)}
             onClick={handleSave}>
             Guardar
         </Button>
@@ -99,25 +113,31 @@ function ModalFiles({ onSave }: FileModalProps) {
 
 
 interface FileElementProps {
-    file: FileItem
+    file: FileData
     index: number
     setList: React.Dispatch<SetStateAction<FileItem[]>>
 }
-function FileElement({ file, setList, index }: FileElementProps) {
+function FileElement({ file, setList }: FileElementProps) {
     const handleDelete = () => {
         if (file.id !== undefined) {
             //mark as delete
-            setList((list) => list.map((l, i) => i == index ? ({ ...l, type: "delete" }) : { ...l }))
+            setList((list) => list.map((l) => file.id == l.file.id ? ({
+                file: {
+                    ...l.file,
+                    type: "delete"
+                }
+            }) : { ...l }))
         } else {
             //delete
-            setList((list) => list.filter((l, i) => (i != index)))
+            setList((list) => list.filter((l) => (file.id != l.file.id)))
         }
     }
     const handleDownload = () => {
         const link = document.createElement('a');
         let url = ""
         if (file.path != undefined)
-            url = file.path;
+            url = `${classflowAPI}download?resource=${file.path}&filename=${file.filename.concat(".").concat(file.ext)}`;
+        console.log({ file });
         if (file.base64 != undefined) {
             const byteCharacters = atob(file.base64);
             const byteNumbers = new Array(byteCharacters.length);
@@ -130,7 +150,10 @@ function FileElement({ file, setList, index }: FileElementProps) {
             url = URL.createObjectURL(blob);
         }
         link.href = url;
-        link.download = file.filename || 'descarga';
+        // link.target = "_self";
+        // link.download = file.filename;
+        console.log(`${file.filename}.${file.ext}`);
+        link.download = `${file.filename}.${file.ext}`;
         link.click();
     }
     return <>
@@ -145,14 +168,31 @@ function FileElement({ file, setList, index }: FileElementProps) {
         </Group>
     </>
 }
+function obtenerMayorID(arreglo: FileItem[]) {
+    if (arreglo.length === 0) {
+        return 0; // Retorna null si el arreglo está vacío
+    }
 
+    // Utilizamos el método reduce para encontrar el máximo ID
+    const mayorID = arreglo.reduce((maxID, objeto) => {
+        const objetoID = objeto.file.id || 0; // Suponemos que la propiedad 'id' existe en cada objeto
+
+        return objetoID > maxID ? objetoID : maxID;
+    }, -Infinity);
+
+    return mayorID;
+}
 export default function FileListItems({ list, setList }: FileListProps) {
     const handleOpenModal = () => {
         modals.open({
             title: "Añadir archivo",
             children: <ModalFiles onSave={(f) => {
+                let id = obtenerMayorID(list);
                 setList((v: FileItem[]) => [...v, {
-                    ...f
+                    file: {
+                        ...f,
+                        id: id + 1
+                    }
                 }]);
             }} />
         })
@@ -165,8 +205,8 @@ export default function FileListItems({ list, setList }: FileListProps) {
             </div>
         </Flex>
         <Flex gap="sm">
-            {list.filter((f) => f.type != "delete").map((l, index) => <>
-                <FileElement file={l} index={index} setList={setList} />
+            {list.filter((f) => f.file.type != "delete").map((l, index) => <>
+                <FileElement file={l.file} index={index} setList={setList} />
             </>)}
         </Flex>
     </>

@@ -160,6 +160,7 @@ export default function CreateFormDetails({ children, delegateSave = false, onSa
     const [disableFileQuestion, setDisableFileQuestion] = useState<boolean>(false);
     useEffect(() => {
         console.log({ values: form.values });
+        console.log("VALUES")
     }, [form.values])
 
 

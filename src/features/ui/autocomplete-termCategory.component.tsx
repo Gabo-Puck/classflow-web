@@ -1,7 +1,7 @@
 import { useAuth } from "@features/auth/auth-context";
 import { StudentItem } from "@features/class/class-list-students.context";
 import { SignupFormProvider } from "@features/signup/signup-form.context";
-import { Combobox, TextInput, useCombobox, Loader, Text } from '@mantine/core';
+import { Combobox, TextInput, useCombobox, Loader, Text, TextInputProps } from '@mantine/core';
 import { notifications } from "@mantine/notifications";
 import { ClassflowPostService, ErrorClassflow, ResponseClassflow, classflowAPI } from "@services/classflow/classflow";
 import { useEffect, useRef, useState } from "react";
@@ -15,14 +15,16 @@ interface AutocompleteTermCategoriesProps {
     clearOnSelect: boolean
     termId: number
     disabled: boolean
+    textInputProps?: TextInputProps,
+    value: string
 }
 
-export function AutocompleteTermCategory({ disabled, termId, url, onSelect, selectedList, removeOnSelect, clearOnSelect }: AutocompleteTermCategoriesProps) {
+export function AutocompleteTermCategory({ value, textInputProps, disabled, termId, url, onSelect, selectedList, removeOnSelect, clearOnSelect }: AutocompleteTermCategoriesProps) {
     const userData = useAuth();
     const combobox = useCombobox({
         onDropdownClose: () => combobox.resetSelectedOption(),
     });
-    const [value, setValue] = useState('');
+    const [searchInput, setSearchInput] = useState(value);
     const [users, setUsers] = useState<StudentItem[] | null>();
     if (!userData)
         throw new Error("Any AutocompleteUsers variant should be defined as children of AuthProvider");
@@ -32,6 +34,10 @@ export function AutocompleteTermCategory({ disabled, termId, url, onSelect, sele
     const [empty, setEmpty] = useState(false);
     const abortController = useRef<AbortController>();
 
+    useEffect(() => {
+        console.log({ cch: value });
+        setSearchInput(value)
+    }, [value])
     function getUsers(searchQuery: string, signal: AbortSignal) {
 
         return new Promise<TermCategoryItem[]>(async (resolve, reject) => {
@@ -106,7 +112,7 @@ export function AutocompleteTermCategory({ disabled, termId, url, onSelect, sele
             return;
         onSelect(option);
         if (!removeOnSelect) {
-            setValue(option.name)
+            setSearchInput(option.name)
             return
         };
         setData((d) => {
@@ -114,7 +120,7 @@ export function AutocompleteTermCategory({ disabled, termId, url, onSelect, sele
             return d.filter((item) => item.id !== option?.id)
         })
         if (!clearOnSelect) return
-        setValue("");
+        setSearchInput("");
     }
 
     useEffect(() => {
@@ -124,7 +130,7 @@ export function AutocompleteTermCategory({ disabled, termId, url, onSelect, sele
             setEmpty(data.length === 0);
     }, [data])
     useEffect(() => {
-        setValue("");
+        setSearchInput(value);
         fetchOptions("");
     }, [termId])
     return (
@@ -140,9 +146,9 @@ export function AutocompleteTermCategory({ disabled, termId, url, onSelect, sele
                     disabled={disabled}
                     label="Selecciona la categoría"
                     placeholder="Buscar por nombre"
-                    value={value}
+                    value={searchInput}
                     onChange={(event) => {
-                        setValue(event.currentTarget.value);
+                        setSearchInput(event.currentTarget.value);
                         fetchOptions(event.currentTarget.value);
                         combobox.resetSelectedOption();
                         combobox.openDropdown();
@@ -151,11 +157,12 @@ export function AutocompleteTermCategory({ disabled, termId, url, onSelect, sele
                     onFocus={() => {
                         combobox.openDropdown();
                         if (data === null) {
-                            fetchOptions(value);
+                            fetchOptions(searchInput);
                         }
                     }}
                     onBlur={() => combobox.closeDropdown()}
                     rightSection={loading && <Loader size={18} />}
+                    {...textInputProps}
                 />
             </Combobox.Target>
 
@@ -170,4 +177,11 @@ export function AutocompleteTermCategory({ disabled, termId, url, onSelect, sele
 
 }
 
-export const AutocompleteTermCategoryAssignment = ({ termId, disabled, onSelect, selectedList = [] }: Omit<AutocompleteTermCategoriesProps, "url" | "clearOnSelect" | "removeOnSelect">) => <AutocompleteTermCategory termId={termId} disabled={disabled} url={`/classes/termsCategories`} onSelect={onSelect} selectedList={selectedList} removeOnSelect={false} clearOnSelect={false} />;
+export const AutocompleteTermCategoryAssignment = ({ value, textInputProps, termId, disabled, onSelect, selectedList = [] }:
+    Omit<AutocompleteTermCategoriesProps, "url" | "clearOnSelect" | "removeOnSelect">) =>
+    <AutocompleteTermCategory
+        value={value}
+        textInputProps={textInputProps}
+        termId={termId}
+        disabled={disabled}
+        url={`/classes/termsCategories`} onSelect={onSelect} selectedList={selectedList} removeOnSelect={false} clearOnSelect={false} />;

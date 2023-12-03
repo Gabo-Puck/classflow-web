@@ -21,7 +21,6 @@ import '@mantine/tiptap/styles.css';
 import NoticeDetail from '@features/notices/notice-detail';
 import ClassflowShell from '@pages/app-shell';
 import Notices from '@pages/Notices';
-import Assignments from '@features/assignments/assignments';
 import Students from '@features/class-members/Students';
 import NoticeTab from '@features/notices/notice-tab';
 import ClassMembersTab from '@features/class-members/class-members-tab';
@@ -34,6 +33,7 @@ import CreateFormTemplate from '@pages/form-template-create';
 import FormTemplateList from '@features/forms-template/forms-template-list.component';
 import FormsTemplateControls from '@features/forms-template/forms-template-controls.component';
 import AssignmentCreate from '@pages/assingment-create';
+import Assignments from '@pages/assignments';
 const theme = createTheme({
   components: {
     Container: Container.extend({
@@ -84,7 +84,7 @@ const router = createBrowserRouter([
             children: [
               {
                 path: "crear",
-                element: <CreateClass/>
+                element: <CreateClass />
               },
               {
                 path: ":classId",
@@ -119,10 +119,18 @@ const router = createBrowserRouter([
                   {
                     path: "tareas",
                     element: <AssignmentsTab />,
-                    children:[
+                    children: [
                       {
-                        path:"crear",
-                        element: <AssignmentCreate/>
+                        index: true,
+                        element: <Assignments />,
+                      },
+                      {
+                        path: "crear",
+                        element: <AssignmentCreate />
+                      },
+                      {
+                        path: "editar/:AssignmentId",
+                        element: <AssignmentCreate />
                       }
                     ]
                   }

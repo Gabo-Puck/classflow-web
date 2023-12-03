@@ -1,9 +1,9 @@
-import { Button, Checkbox, InputLabel, NumberInput, Radio, ScrollArea, Stack, Text, TextInput } from "@mantine/core";
+import { Alert, Button, Checkbox, InputLabel, NumberInput, Radio, ScrollArea, Stack, Text, TextInput } from "@mantine/core";
 import { AssignmentCreateFormProvider, AssingmentCreateBody, useAssignmentCreateBodyFormContext, useFormCreateAssignment } from "./assignment-create-form.context";
 import { executeValidations } from "@validations/exec-validations.validator";
 import { isRequired, maxLength } from "@validations/basic";
 import { ClassflowGetService, ClassflowPostService, ResponseClassflow, classflowAPI } from "@services/classflow/classflow";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEditor } from "@tiptap/react";
 import StarterKit from '@tiptap/starter-kit';
@@ -17,83 +17,49 @@ import { AutcompleteGroupsAssignment } from "@features/ui/autocomplete-groups.co
 import { AutocompleteTerms, AutocompleteTermsAssignment } from "@features/ui/autocomplete-term.component";
 import { AutocompleteTermCategoryAssignment } from "@features/ui/autocomplete-termCategory.component";
 import FileListItems, { FileItem } from "./assignment-file-list.component";
-export default function CreateAssignmentDetails() {
+import { IconAlertCircle } from "@tabler/icons-react";
+
+interface CreateAssignmentDetailsProps {
+    fileList: FileItem[];
+    setFileList: React.Dispatch<React.SetStateAction<FileItem[]>>
+}
+export default function CreateAssignmentDetails({ fileList, setFileList }: CreateAssignmentDetailsProps) {
     const navigate = useNavigate();
     const { noticeId } = useParams();
     const [loading, setLoading] = useState(false);
     const [loadingData, setLoadingData] = useState(false);
-    const [fileList, setFileList] = useState<FileItem[]>([]);
     const editor = useEditor({
         extensions: [
             StarterKit,
             TextAlign.configure({ types: ["heading", "paragraph"] })
         ],
-        editable: !loading
+        editable: !loading,
+        onBlur: ({ editor }) => {
+            if (!loading)
+                form.setFieldValue("description", editor?.getJSON())
+        }
     });
     const form = useAssignmentCreateBodyFormContext()
-    useEffect(() => {
-        if (noticeId && editor) {
-            fetchData();
-            return;
-        }
-    }, [editor])
 
-    const onError = () => { }
-    const onSuccess = ({ data: { data } }: ResponseClassflow<AssingmentCreateBody>) => {
-        form.setFieldValue("title", data.name)
-        if (data.description)
-            editor?.commands.setContent(data.description)
-    }
-    const onSend = () => { setLoadingData(true) }
-    const onFinally = () => { setLoadingData(false) }
-    const fetchData = async () => {
-        let get = new ClassflowGetService<{}, AssingmentCreateBody, string>(`/notices/${noticeId}`, {});
-        // let res = await axios.post("http://127.0.0.1:8000/authorization",values);
-        get.onSend = onSend;
-        get.onError = onError;
-        get.onSuccess = onSuccess;
-        get.onFinally = onFinally;
-        await classflowAPI.exec(get);
-    }
-    const handleSubmit = async () => {
-        const onError = () => { }
-        const onSuccess = (data: ResponseClassflow<string>) => {
-            console.log("TOKEN", data);
-            navigate("../");
-        }
-        const onSend = () => { setLoading(true) }
-        const onFinally = () => { setLoading(false) }
-        let hasErrors = form.validate().hasErrors;
-        if (editor?.isEmpty) {
-            notifications.show({
-                message: "Agrega contenido en el anuncio antes de guardarlo",
-                color: "orange"
-            })
-            return;
-        }
-        if (hasErrors)
-            return;
-        let body = { ...form.values, id: Number(form.values.id), description: JSON.stringify(editor?.getJSON()) }
-        let url = "";
-        if (noticeId)
-            url = "/notices/edit"
-        else
-            url = "/notices/create";
-        let post = new ClassflowPostService<AssingmentCreateBody, string, string>(url, {}, body);
-        post.onSend = onSend;
-        post.onError = onError;
-        post.onSuccess = onSuccess;
-        post.onFinally = onFinally;
-        await classflowAPI.exec(post);
-    }
     if (loadingData) {
         return <Text>Loading...</Text>
     }
+
+    useEffect(() => {
+        console.log({ xsss: form.values.description });
+        if (editor !== null)
+            editor.commands.setContent(form.values.description)
+    }, [editor, form.values.description])
+
+    useEffect(() => {
+        console.log({ fileList });
+    }
+        , [fileList])
     return <Stack>
         <TextInput
             withAsterisk
             placeholder="Título de la tarea"
-            {...form.getInputProps("name")} />
+            {...form.getInputProps("title")} />
         <DateTimePicker
             valueFormat="DD MMM YYYY hh:mm A"
             label="Fecha de entrega"
@@ -114,10 +80,32 @@ export default function CreateAssignmentDetails() {
             hideControls
 
             {...form.getInputProps("latePenalty")} />
-        <AutcompleteGroupsAssignment selectedList={[]} onSelect={(s) => { form.setFieldValue("groupId", s.id) }} />
-        <AutocompleteTermsAssignment selectedList={[]} onSelect={(s) => { form.setFieldValue("termId", s.id) }} />
-        <AutocompleteTermCategoryAssignment disabled={form.values.termId == -1} termId={form.values.termId} selectedList={[]} onSelect={(s) => { form.setFieldValue("categoryId", s.id) }} />
+        <AutcompleteGroupsAssignment
+            textInputProps={{
+                error: form.errors["groupId"]
+            }}
+            value={form.values.group?.name || ""}
+            selectedList={[]}
+            onSelect={(s) => { form.setFieldValue("groupId", s.id) }} />
+        <AutocompleteTermsAssignment
+            value={form.values.category?.termDetails.name || ""}
+            textInputProps={{
+                error: form.errors["termId"]
+            }}
+            selectedList={[]}
+            onSelect={(s) => { form.setFieldValue("termId", s.id) }} />
+        <AutocompleteTermCategoryAssignment
+            value={form.values.category?.name || ""}
+            textInputProps={{
+                error: form.errors["categoryId"]
+            }}
+            disabled={form.values.termId == -1}
+            termId={form.values.termId as number} selectedList={[]}
+            onSelect={(s) => { form.setFieldValue("categoryId", s.id) }} />
         <InputLabel>Descripción</InputLabel>
+        {form.errors["description"] && <Alert variant="light" color="orange.5" title="Atención" icon={<IconAlertCircle />}>
+            {form.errors["description"]}
+        </Alert>}
         <RichTextEditor editor={editor}>
             <RichTextEditor.Toolbar sticky stickyOffset={1}>
                 <RichTextEditor.ControlsGroup>

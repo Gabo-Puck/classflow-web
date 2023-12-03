@@ -1,7 +1,7 @@
 import { useAuth } from "@features/auth/auth-context";
 import { StudentItem } from "@features/class/class-list-students.context";
 import { SignupFormProvider } from "@features/signup/signup-form.context";
-import { Combobox, TextInput, useCombobox, Loader, Text } from '@mantine/core';
+import { Combobox, TextInput, useCombobox, Loader, Text, TextInputProps } from '@mantine/core';
 import { notifications } from "@mantine/notifications";
 import { ClassflowPostService, ErrorClassflow, ResponseClassflow, classflowAPI } from "@services/classflow/classflow";
 import { useEffect, useRef, useState } from "react";
@@ -13,14 +13,17 @@ interface AutocompleteTermProps {
     selectedList: TermItem[] | null
     removeOnSelect: boolean
     clearOnSelect: boolean
+    textInputProps?: TextInputProps,
+    value: string
 }
 
-export function AutocompleteTerms({ url, onSelect, selectedList, removeOnSelect, clearOnSelect }: AutocompleteTermProps) {
+export function AutocompleteTerms({ value, textInputProps, url, onSelect, selectedList, removeOnSelect, clearOnSelect }: AutocompleteTermProps) {
     const userData = useAuth();
     const combobox = useCombobox({
         onDropdownClose: () => combobox.resetSelectedOption(),
     });
-    const [value, setValue] = useState('');
+
+    const [searchInput, setSearchInput] = useState(value);
     const [users, setUsers] = useState<StudentItem[] | null>();
     if (!userData)
         throw new Error("Any AutocompleteUsers variant should be defined as children of AuthProvider");
@@ -29,7 +32,7 @@ export function AutocompleteTerms({ url, onSelect, selectedList, removeOnSelect,
     const [data, setData] = useState<TermItem[] | null>(null);
     const [empty, setEmpty] = useState(false);
     const abortController = useRef<AbortController>();
-
+    useEffect(() => setSearchInput(value), [value])
     function getUsers(searchQuery: string, signal: AbortSignal) {
 
         return new Promise<TermItem[]>(async (resolve, reject) => {
@@ -103,7 +106,7 @@ export function AutocompleteTerms({ url, onSelect, selectedList, removeOnSelect,
             return;
         onSelect(option);
         if (!removeOnSelect) {
-            setValue(option.name)
+            setSearchInput(option.name)
             return
         };
         setData((d) => {
@@ -111,7 +114,7 @@ export function AutocompleteTerms({ url, onSelect, selectedList, removeOnSelect,
             return d.filter((item) => item.id !== option?.id)
         })
         if (!clearOnSelect) return
-        setValue("");
+        setSearchInput("");
     }
 
     useEffect(() => {
@@ -132,9 +135,9 @@ export function AutocompleteTerms({ url, onSelect, selectedList, removeOnSelect,
                 <TextInput
                     label="Selecciona el parcial"
                     placeholder="Buscar por nombre"
-                    value={value}
+                    value={searchInput}
                     onChange={(event) => {
-                        setValue(event.currentTarget.value);
+                        setSearchInput(event.currentTarget.value);
                         fetchOptions(event.currentTarget.value);
                         combobox.resetSelectedOption();
                         combobox.openDropdown();
@@ -143,11 +146,12 @@ export function AutocompleteTerms({ url, onSelect, selectedList, removeOnSelect,
                     onFocus={() => {
                         combobox.openDropdown();
                         if (data === null) {
-                            fetchOptions(value);
+                            fetchOptions(searchInput);
                         }
                     }}
                     onBlur={() => combobox.closeDropdown()}
                     rightSection={loading && <Loader size={18} />}
+                    {...textInputProps}
                 />
             </Combobox.Target>
 
@@ -162,4 +166,12 @@ export function AutocompleteTerms({ url, onSelect, selectedList, removeOnSelect,
 
 }
 
-export const AutocompleteTermsAssignment = ({ onSelect, selectedList = [] }: Omit<AutocompleteTermProps, "url"|"clearOnSelect"|"removeOnSelect">) => <AutocompleteTerms url={`/classes/terms`} onSelect={onSelect} selectedList={selectedList} removeOnSelect={false} clearOnSelect={false} />;
+export const AutocompleteTermsAssignment = ({ value, textInputProps, onSelect, selectedList = [] }: Omit<AutocompleteTermProps, "url" | "clearOnSelect" | "removeOnSelect">) =>
+    <AutocompleteTerms
+        value={value}
+        textInputProps={textInputProps}
+        url={`/classes/terms`}
+        onSelect={onSelect}
+        selectedList={selectedList}
+        removeOnSelect={false}
+        clearOnSelect={false} />;

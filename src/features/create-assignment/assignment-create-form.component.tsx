@@ -17,7 +17,6 @@ export interface ButtonAddFormProps {
 }
 
 export function ButtonAddForm({ enableForm, setEnableForm }: ButtonAddFormProps) {
-    const role = useRole();
     const form = useFormTemplateFormContext();
     const [loading, setLoading] = useState<boolean>(false);
     const handleSelect = async (id?: number) => {
@@ -27,7 +26,6 @@ export function ButtonAddForm({ enableForm, setEnableForm }: ButtonAddFormProps)
             return;
         }
         try {
-            setLoading(true);
             const onError = (data: ErrorClassflow<string>) => {
                 notifications.show({
                     color: "orange",
@@ -39,10 +37,18 @@ export function ButtonAddForm({ enableForm, setEnableForm }: ButtonAddFormProps)
                 form.setValues(data);
                 setEnableForm(true);
             }
+            const onSend = () => {
+                setLoading(true);
+            }
+            const onFinally = () => {
+                setLoading(false);
+            }
             let url = `/form-templates/${id}`;
             let post = new ClassflowGetService<string, FormTemplateBody, string>(url, {});
             post.onError = onError;
             post.onSuccess = onSuccess;
+            post.onSend = onSend
+            post.onFinally = onFinally
             await classflowAPI.exec(post);
         } catch (error) {
             console.log(error);
@@ -81,18 +87,18 @@ export function ButtonAddForm({ enableForm, setEnableForm }: ButtonAddFormProps)
             blur: 2
         }} visible={loading} c="grape" />
         {enableForm && <>
-            <FormTemplateFormProvider form={form}>
-                <Button onClick={deleteForm}>Borrar formulario</Button>
 
-                <CreateFormDetails delegateSave={true} onSave={() => { }}>
-                    <CatalogTitle title="Formulario" />
-                    <TextInput
-                        label="Nombre formulario"
-                        withAsterisk
-                        {...form.getInputProps("name")} />
-                </CreateFormDetails>
+            <Button onClick={deleteForm}>Borrar formulario</Button>
 
-            </FormTemplateFormProvider>
+            <CreateFormDetails delegateSave={true} onSave={() => { }}>
+                <CatalogTitle title="Formulario" />
+                <TextInput
+                    label="Nombre formulario"
+                    withAsterisk
+                    {...form.getInputProps("name")} />
+            </CreateFormDetails>
+
+
         </>
         }
     </>
