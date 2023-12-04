@@ -11,10 +11,10 @@ import { Link } from "react-router-dom";
 export default function NoticesControl() {
     return <>
         <NoticesProvider>
-            <Stack>
+            {/* <Stack>
                 <Button component={Link} to="crear" fullWidth>Crear anuncio</Button>
-                <ListNotices />
-            </Stack>
+            </Stack> */}
+            <ListNotices />
         </NoticesProvider>
     </>
 

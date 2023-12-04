@@ -1,14 +1,10 @@
 // form-context.ts file
-import { FormTemplate, FormTemplateBody } from '@features/forms-template/forms-template-form.context';
-import { TermTemplateDetails } from '@features/terms-template/terms-template-form.context';
+import { FormTemplateBody } from '@features/forms-template/forms-template-form.context';
 import { createFormContext } from '@mantine/form';
 import { isRequired } from '@validations/basic';
 import { executeValidations } from '@validations/index';
-import { createContext, useContext } from 'react';
-import { getValueByProp } from 'src/functions/general';
-import { IName } from 'src/types/Name';
-import { FileItem } from './assignment-file-list.component';
 import { JSONContent } from '@tiptap/react';
+import { FileItem } from '@features/ui/file-item';
 
 export interface AssigmentCreate {
     id?: number
@@ -131,3 +127,4 @@ export const useFormCreateAssignment = ({ id = undefined }: useFormAssignmentPro
     }
     )
 }
+

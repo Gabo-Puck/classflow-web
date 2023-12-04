@@ -2,14 +2,15 @@ import { Card, ScrollArea, Stack, Table, Text } from "@mantine/core";
 import { ClassflowGetService, ResponseClassflow, classflowAPI } from "@services/classflow/classflow";
 import React, { useEffect, useState } from "react";
 import { ROLES, useAuth } from "@features/auth/auth-context";
-import { AssignmentItem, useAssignments, useAssignmentsDispatch } from "./assingments-list.context";
+import { useGroups, useGroupsDispatch } from "./groups-list.context";
 import AvatarClassflow from "@features/ui/avatar.component";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Loading from "@features/ui/Loading";
+import { GroupItem } from "src/types/group";
 
 
 export interface ActionsElementProps extends React.PropsWithChildren {
-    notice: AssignmentItem;
+    group: GroupItem;
     index: number
 }
 
@@ -17,18 +18,19 @@ export interface ListNoticesProps {
     Element?: React.ComponentType<ActionsElementProps>
 }
 
-export default function ListAssignments({ Element }: ListNoticesProps) {
-    const notices = useAssignments();
-    const dispatch = useAssignmentsDispatch();
+export default function ListGroups({ Element }: ListNoticesProps) {
+    const groupState = useGroups();
+    const dispatch = useGroupsDispatch();
     const [loading, setLoading] = useState(true);
-    if (!notices || !dispatch)
-        throw new Error("ListAssignments should be defined as children of AssignmentProvider")
+    const { classId } = useParams();
+    if (!groupState || !dispatch)
+        throw new Error("ListGroups should be defined as children of NoticesProvider")
 
     const onError = () => {
         alert("algo a salido mal");
     }
 
-    const onSuccess = ({ data, status }: ResponseClassflow<AssignmentItem[]>) => {
+    const onSuccess = ({ data, status }: ResponseClassflow<GroupItem[]>) => {
         dispatch({
             type: "set",
             payload: data.data
@@ -40,9 +42,9 @@ export default function ListAssignments({ Element }: ListNoticesProps) {
     const onFinally = () => {
         setLoading(false);
     }
-    const getClasses = async () => {
-        let url = "/assignment/";
-        let get = new ClassflowGetService<null, AssignmentItem[], string>(url, {});
+    const getMembers = async () => {
+        let url = `/groups/class/${classId}`;
+        let get = new ClassflowGetService<null, GroupItem[], string>(url, {});
         get.onSend = onSend;
         get.onError = onError;
         get.onSuccess = onSuccess;
@@ -51,28 +53,28 @@ export default function ListAssignments({ Element }: ListNoticesProps) {
     }
 
     useEffect(() => {
-        if (notices.items === null) {
-            getClasses();
+        if (groupState.items === null) {
+            getMembers();
         }
-    }, [notices.items])
-    if (loading || notices.items === null) {
+    }, [groupState.items])
+    if (loading || groupState.items === null) {
         return <Loading visible={loading} />
 
     }
 
-    const list = notices.items.map((element, index) => (
+    const list = groupState.items.map((element, index) => (
         <Card style={{
             display: "flex",
             flexDirection: "row",
-            justifyContent: "space-between",
+            justifyContent: "space-between"
         }} component={Link} to={`ver/${element.id}`}>
             <Text>
-                {element.title}
+                {element.name}
             </Text>
-            {Element && <Element notice={element} index={index} />}
+            {Element && <Element group={element} index={index} />}
         </Card>
     ));
-    return <Stack style={{ flex: 1 }}>
+    return <Stack>
         {list}
     </Stack>
 

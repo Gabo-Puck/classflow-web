@@ -21,7 +21,6 @@ import '@mantine/tiptap/styles.css';
 import NoticeDetail from '@features/notices/notice-detail';
 import ClassflowShell from '@pages/app-shell';
 import Notices from '@pages/Notices';
-import Students from '@features/class-members/Students';
 import NoticeTab from '@features/notices/notice-tab';
 import ClassMembersTab from '@features/class-members/class-members-tab';
 import AssignmentsTab from '@features/assignments/assignments-tab';
@@ -34,6 +33,12 @@ import FormTemplateList from '@features/forms-template/forms-template-list.compo
 import FormsTemplateControls from '@features/forms-template/forms-template-controls.component';
 import AssignmentCreate from '@pages/assingment-create';
 import Assignments from '@pages/assignments';
+import AssignmentDetails from '@features/assignments/assignment-detail';
+import AssignmentDetail from '@pages/assignment-details';
+import ClassMembers from '@pages/class-members';
+import Groups from '@pages/groups';
+import GroupsTab from '@features/groups/groups-tab';
+import CreateGroup from '@pages/create-group';
 const theme = createTheme({
   components: {
     Container: Container.extend({
@@ -114,7 +119,27 @@ const router = createBrowserRouter([
                   },
                   {
                     path: "integrantes",
-                    element: <ClassMembersTab />
+                    element: <ClassMembersTab />,
+                    children: [
+                      {
+                        index: true,
+                        element: <ClassMembers />
+                      }
+                    ]
+                  },
+                  {
+                    path: "grupos",
+                    element: <GroupsTab />,
+                    children: [
+                      {
+                        index: true,
+                        element: <Groups />
+                      },
+                      {
+                        path: "crear",
+                        element: <CreateGroup />
+                      }
+                    ]
                   },
                   {
                     path: "tareas",
@@ -131,6 +156,10 @@ const router = createBrowserRouter([
                       {
                         path: "editar/:AssignmentId",
                         element: <AssignmentCreate />
+                      },
+                      {
+                        path: "ver/:AssignmentId",
+                        element: <AssignmentDetail />
                       }
                     ]
                   }

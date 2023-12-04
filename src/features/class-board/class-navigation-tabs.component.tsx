@@ -27,6 +27,7 @@ export default function NavigationTabs() {
             <Tabs.Tab value="anuncios">Anuncios</Tabs.Tab>
             <Tabs.Tab value="tareas">Tareas</Tabs.Tab>
             <Tabs.Tab value="integrantes">Integrantes</Tabs.Tab>
+            <Tabs.Tab value="grupos">Grupos</Tabs.Tab>
         </Tabs.List>
     </Tabs>
 }

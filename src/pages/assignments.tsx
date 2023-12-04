@@ -7,12 +7,10 @@ import { AssignmentsProvider } from "@features/assignments/assingments-list.cont
 
 export default function Assignments() {
     const isMobile = useMediaQuery(`(max-width: 1049px)`);
-    return <ScrollArea.Autosize h={"100%"}>
-        <AssignmentsProvider>
-            <Stack>
-                <AssignmentsControl />
-                <ListAssignments />
-            </Stack>
-        </AssignmentsProvider>
-    </ScrollArea.Autosize>
+    return <AssignmentsProvider>
+        <ScrollArea h={"100%"}>
+            <AssignmentsControl />
+            <ListAssignments />
+        </ScrollArea>
+    </AssignmentsProvider>
 }

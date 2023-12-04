@@ -1,31 +1,25 @@
-import { Alert, Button, Checkbox, InputLabel, NumberInput, Radio, ScrollArea, Stack, Text, TextInput } from "@mantine/core";
-import { AssignmentCreateFormProvider, AssingmentCreateBody, useAssignmentCreateBodyFormContext, useFormCreateAssignment } from "./assignment-create-form.context";
-import { executeValidations } from "@validations/exec-validations.validator";
-import { isRequired, maxLength } from "@validations/basic";
-import { ClassflowGetService, ClassflowPostService, ResponseClassflow, classflowAPI } from "@services/classflow/classflow";
+import * as dayjs from "dayjs"
+import { Alert, Checkbox, InputLabel, NumberInput, Stack, Text, TextInput } from "@mantine/core";
+import { useAssignmentCreateBodyFormContext } from "./assignment-create-form.context";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEditor } from "@tiptap/react";
 import StarterKit from '@tiptap/starter-kit';
 import { RichTextEditor } from '@mantine/tiptap';
 import { TextAlign } from '@tiptap/extension-text-align';
-import { notifications } from "@mantine/notifications";
-import CatalogTitle from "@features/ui/CatalogTitle";
-import * as dayjs from "dayjs"
 import { DateTimePicker } from "@mantine/dates"
 import { AutcompleteGroupsAssignment } from "@features/ui/autocomplete-groups.component";
-import { AutocompleteTerms, AutocompleteTermsAssignment } from "@features/ui/autocomplete-term.component";
+import { AutocompleteTermsAssignment } from "@features/ui/autocomplete-term.component";
 import { AutocompleteTermCategoryAssignment } from "@features/ui/autocomplete-termCategory.component";
-import FileListItems, { FileItem } from "./assignment-file-list.component";
 import { IconAlertCircle } from "@tabler/icons-react";
+import { FileItem } from "@features/ui/file-item";
+import { FileListItemsOperation } from "@features/ui/file-item-list";
 
 interface CreateAssignmentDetailsProps {
     fileList: FileItem[];
     setFileList: React.Dispatch<React.SetStateAction<FileItem[]>>
 }
 export default function CreateAssignmentDetails({ fileList, setFileList }: CreateAssignmentDetailsProps) {
-    const navigate = useNavigate();
-    const { noticeId } = useParams();
     const [loading, setLoading] = useState(false);
     const [loadingData, setLoadingData] = useState(false);
     const editor = useEditor({
@@ -148,7 +142,7 @@ export default function CreateAssignmentDetails({ fileList, setFileList }: Creat
             </RichTextEditor.Toolbar>
             <RichTextEditor.Content />
         </RichTextEditor>
-        <FileListItems list={fileList} setList={setFileList} />
+        <FileListItemsOperation list={fileList} setList={setFileList} />
     </Stack>
 
 

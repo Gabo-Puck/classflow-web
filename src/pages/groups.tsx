@@ -1,9 +1,8 @@
-import ClassInvitationModes from "@features/class-board/class-invitation-code.component";
-import NoticesControl from "@features/notices/notices-control.component";
-import { Grid, ScrollArea, Stack, em } from "@mantine/core";
+import GroupControl from "@features/groups/groups-control.component";
+import { Grid, ScrollArea, Stack } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 
-export default function Notices() {
+export default function Groups() {
     const isMobile = useMediaQuery(`(max-width: 1049px)`);
     return <Grid grow styles={{
         root: {
@@ -17,9 +16,8 @@ export default function Notices() {
     }} >
         <Grid.Col span={9} h="100%">
             <ScrollArea h={"100%"}>
-                <NoticesControl />
+                <GroupControl />
             </ScrollArea>
         </Grid.Col>
-
     </Grid>
 }

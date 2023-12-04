@@ -1,8 +1,5 @@
-import { TermTemplateFormProvider, useFormTerms } from "@features/terms-template/terms-template-form.context";
 import { AssingmentCreateBody, AssignmentCreateFormProvider, useFormCreateAssignment } from "./assignment-create-form.context";
-import CreateTermDetails from "@features/terms-template/terms-template-create-details-form.component";
-import CatalogTitle from "@features/ui/CatalogTitle";
-import { Button, ScrollArea, Stack, Tabs, Text, TextInput } from "@mantine/core";
+import { Button, Stack, Tabs, Text } from "@mantine/core";
 import { ClassflowGetService, ClassflowPostService, ClassflowPutService, ErrorClassflow, ResponseClassflow, classflowAPI } from "@services/classflow/classflow";
 import { notifications } from "@mantine/notifications";
 import { useNavigate, useParams } from "react-router-dom";
@@ -11,7 +8,8 @@ import AssignmentAddForm from "./assignment-add-form.component";
 import { useEffect, useState } from "react";
 import { FormTemplateFormProvider, useFormTemplate } from "@features/forms-template/forms-template-form.context";
 import { modals } from "@mantine/modals";
-import { FileItem } from "./assignment-file-list.component";
+import { FileItem } from "@features/ui/file-item";
+
 
 //TODO: Fix delete files when are retrieved from backend
 export default function AssignmentCreateForm() {
@@ -147,13 +145,17 @@ export default function AssignmentCreateForm() {
                             <Tabs.Tab value="second">Formulario</Tabs.Tab>
                         </Tabs.List>
                     </div>
-                    <Tabs.Panel value="first">
-                        <CreateAssignmentDetails fileList={fileList} setFileList={setFileList} />
-                    </Tabs.Panel>
-                    <Tabs.Panel value="second">
-                        <AssignmentAddForm enableForm={enableForm} setEnableForm={setEnableForm} />
-                    </Tabs.Panel>
-                    <Button onClick={handleSave} loading={loading}>Guardar</Button>
+                    <Stack>
+                        <Tabs.Panel value="first">
+                            <CreateAssignmentDetails fileList={fileList} setFileList={setFileList} />
+                        </Tabs.Panel>
+                        <Tabs.Panel value="second">
+                            <AssignmentAddForm enableForm={enableForm} setEnableForm={setEnableForm} />
+                        </Tabs.Panel>
+                        <div>
+                            <Button onClick={handleSave} loading={loading}>Guardar</Button>
+                        </div>
+                    </Stack>
                 </Tabs>
             </FormTemplateFormProvider>
         </AssignmentCreateFormProvider>

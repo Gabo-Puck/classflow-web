@@ -36,7 +36,8 @@ export function useTabsClassBoard() {
 type Anuncios = { type: 'anuncios'; payload: "anuncios", path: string };
 type Integrantes = { type: 'integrantes'; payload: "integrantes", path: string };
 type Tareas = { type: 'tareas'; payload: "tareas", path: string };
-export type TabsAction = Anuncios | Integrantes | Tareas;
+type Grupos = { type: 'grupos'; payload: "grupos", path: string };
+export type TabsAction = Anuncios | Integrantes | Tareas | Grupos;
 
 //create context for dispatch
 export const ClassDetailDispatch = createContext<React.Dispatch<TabsAction> | undefined | null>(null);
@@ -47,6 +48,7 @@ export function classDetailsReducer(classDetails: ClassTabState | null, action: 
         case 'anuncios':
         case 'integrantes':
         case 'tareas':
+        case 'grupos':
             return {
                 ...classDetails,
                 activeTab: action.payload,

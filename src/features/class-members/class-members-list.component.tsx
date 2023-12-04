@@ -2,14 +2,14 @@ import { Card, ScrollArea, Stack, Table, Text } from "@mantine/core";
 import { ClassflowGetService, ResponseClassflow, classflowAPI } from "@services/classflow/classflow";
 import React, { useEffect, useState } from "react";
 import { ROLES, useAuth } from "@features/auth/auth-context";
-import { AssignmentItem, useAssignments, useAssignmentsDispatch } from "./assingments-list.context";
+import { MemberItem, useClassMember, useClassMemberDispatch } from "./class-members-list.context";
 import AvatarClassflow from "@features/ui/avatar.component";
 import { Link } from "react-router-dom";
 import Loading from "@features/ui/Loading";
 
 
 export interface ActionsElementProps extends React.PropsWithChildren {
-    notice: AssignmentItem;
+    member: MemberItem;
     index: number
 }
 
@@ -17,18 +17,18 @@ export interface ListNoticesProps {
     Element?: React.ComponentType<ActionsElementProps>
 }
 
-export default function ListAssignments({ Element }: ListNoticesProps) {
-    const notices = useAssignments();
-    const dispatch = useAssignmentsDispatch();
+export default function ListClassMembers({ Element }: ListNoticesProps) {
+    const member = useClassMember();
+    const dispatch = useClassMemberDispatch();
     const [loading, setLoading] = useState(true);
-    if (!notices || !dispatch)
-        throw new Error("ListAssignments should be defined as children of AssignmentProvider")
+    if (!member || !dispatch)
+        throw new Error("ListClassMembers should be defined as children of NoticesProvider")
 
     const onError = () => {
         alert("algo a salido mal");
     }
 
-    const onSuccess = ({ data, status }: ResponseClassflow<AssignmentItem[]>) => {
+    const onSuccess = ({ data, status }: ResponseClassflow<MemberItem[]>) => {
         dispatch({
             type: "set",
             payload: data.data
@@ -40,9 +40,9 @@ export default function ListAssignments({ Element }: ListNoticesProps) {
     const onFinally = () => {
         setLoading(false);
     }
-    const getClasses = async () => {
-        let url = "/assignment/";
-        let get = new ClassflowGetService<null, AssignmentItem[], string>(url, {});
+    const getMembers = async () => {
+        let url = "/classes/members";
+        let get = new ClassflowGetService<null, MemberItem[], string>(url, {});
         get.onSend = onSend;
         get.onError = onError;
         get.onSuccess = onSuccess;
@@ -51,28 +51,28 @@ export default function ListAssignments({ Element }: ListNoticesProps) {
     }
 
     useEffect(() => {
-        if (notices.items === null) {
-            getClasses();
+        if (member.items === null) {
+            getMembers();
         }
-    }, [notices.items])
-    if (loading || notices.items === null) {
+    }, [member.items])
+    if (loading || member.items === null) {
         return <Loading visible={loading} />
 
     }
 
-    const list = notices.items.map((element, index) => (
+    const list = member.items.map((element, index) => (
         <Card style={{
             display: "flex",
             flexDirection: "row",
-            justifyContent: "space-between",
+            justifyContent: "space-between"
         }} component={Link} to={`ver/${element.id}`}>
             <Text>
-                {element.title}
+                {element.name}
             </Text>
-            {Element && <Element notice={element} index={index} />}
+            {Element && <Element member={element} index={index} />}
         </Card>
     ));
-    return <Stack style={{ flex: 1 }}>
+    return <Stack>
         {list}
     </Stack>
 

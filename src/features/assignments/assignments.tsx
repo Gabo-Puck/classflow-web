@@ -5,6 +5,8 @@ import { Link, useNavigate } from "react-router-dom";
 
 export default function Assignments() {
 
-    return <Button component={Link} to="crear" fullWidth>Crear tarea</Button>
+    return <div style={{ flex: 1 }}>
+        <Button component={Link} to="crear" fullWidth>Crear tarea</Button>
+    </div>
 
 }

@@ -72,7 +72,7 @@ export default function ListNotices({ Element }: ListNoticesProps) {
             {Element && <Element notice={element} index={index} />}
         </Card>
     ));
-    return <Stack>
+    return <Stack h="100%">
         {list}
     </Stack>
 

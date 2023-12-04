@@ -1,9 +1,7 @@
-import { Button, Grid, LoadingOverlay, Modal, Text, TextInput } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { ROLES, useRole } from "@features/auth/auth-context";
-import { ContextModalProps, modals } from "@mantine/modals";
+import { Button, LoadingOverlay, TextInput } from "@mantine/core";
+import { modals } from "@mantine/modals";
 import SelectModal from "./assignment-select-modal.component";
-import { FormTemplateBody, FormTemplateFormProvider, useFormTemplate, useFormTemplateForm, useFormTemplateFormContext } from "@features/forms-template/forms-template-form.context";
+import { FormTemplateBody, useFormTemplateFormContext } from "@features/forms-template/forms-template-form.context";
 import CreateFormDetails from "@features/forms-template/forms-template-create-details-form.component";
 import CatalogTitle from "@features/ui/CatalogTitle";
 import React, { SetStateAction, useState } from "react";
