@@ -87,10 +87,10 @@ export function AutocompleteUsers({ url, onSelect, selectedList }: AutocompleteU
     const options = (data || []).map((item) => (
         <Combobox.Option value={item.email} key={item.email}>
             <Text fz="sm">
-                {`${item.name} ${item.lastname}`}
+                {`${item.email}`}
             </Text>
             <Text fz="xs">
-                {`${item.email}`}
+                {`${item.name} ${item.lastname}`}
             </Text>
         </Combobox.Option>
     ));

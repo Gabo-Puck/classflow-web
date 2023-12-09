@@ -138,6 +138,10 @@ const router = createBrowserRouter([
                       {
                         path: "crear",
                         element: <CreateGroup />
+                      },
+                      {
+                        path: "editar/:groupId",
+                        element: <CreateGroup />
                       }
                     ]
                   },

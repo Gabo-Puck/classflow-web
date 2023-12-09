@@ -17,7 +17,6 @@ export default function CreateGroup() {
     }} >
         <Grid.Col span={9} h="100%">
             <ScrollArea h={"100%"}>
-                {/* <GroupControl /> */}
                 <GroupForm />
             </ScrollArea>
         </Grid.Col>

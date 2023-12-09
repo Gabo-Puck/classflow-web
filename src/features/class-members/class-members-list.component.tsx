@@ -67,7 +67,7 @@ export default function ListClassMembers({ Element }: ListNoticesProps) {
             justifyContent: "space-between"
         }} component={Link} to={`ver/${element.id}`}>
             <Text>
-                {element.name}
+                {`${element.name} ${element.lastname}`}
             </Text>
             {Element && <Element member={element} index={index} />}
         </Card>

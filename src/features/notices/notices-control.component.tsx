@@ -6,14 +6,14 @@ import { NoticeItem, NoticesProvider, useNotices, useNoticesDispatch } from "./n
 import AvatarClassflow from "@features/ui/avatar.component";
 import ListNotices, { ActionsElementProps } from "./notices-list.component";
 import { Link } from "react-router-dom";
-
+//TODO: Fix element.id.trim is not a function in autocomplete invitations :p
 
 export default function NoticesControl() {
     return <>
         <NoticesProvider>
-            {/* <Stack>
+            <Stack>
                 <Button component={Link} to="crear" fullWidth>Crear anuncio</Button>
-            </Stack> */}
+            </Stack>
             <ListNotices />
         </NoticesProvider>
     </>

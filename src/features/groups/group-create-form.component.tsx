@@ -1,8 +1,8 @@
-import { Button, ScrollArea, Stack, Text, TextInput } from "@mantine/core";
-import { GroupDetails, GroupFormProvider, GroupFormValues, useGroupForm } from "./group-create-form.context";
+import { Button, Group, InputLabel, ScrollArea, Stack, Text, TextInput } from "@mantine/core";
+import { GroupClassflow, GroupDetails, GroupFormProvider, GroupFormValues, useGroupForm } from "./group-create-form.context";
 import { executeValidations } from "@validations/exec-validations.validator";
 import { isRequired, maxLength } from "@validations/basic";
-import { ClassflowGetService, ClassflowPostService, ResponseClassflow, classflowAPI } from "@services/classflow/classflow";
+import { ClassflowGetService, ClassflowPostService, ClassflowPutService, ResponseClassflow, classflowAPI } from "@services/classflow/classflow";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEditor } from "@tiptap/react";
@@ -12,25 +12,24 @@ import { TextAlign } from '@tiptap/extension-text-align';
 import { notifications } from "@mantine/notifications";
 import CatalogTitle from "@features/ui/CatalogTitle";
 import { OptionType, TransferList } from "@features/ui/transfer-list.component";
+import { GroupItem } from "src/types/group";
+import { MemberItem } from "@features/class-members/class-members-list.context";
+import AvatarClassflow from "@features/ui/avatar.component";
 
+
+interface GroupMember extends MemberItem {
+    GroupDetails: GroupDetails
+}
 
 export default function GroupForm() {
     const navigate = useNavigate();
-    const { noticeId: groupId } = useParams();
+    const { groupId, classId } = useParams();
     const [loading, setLoading] = useState(false);
     const [loadingData, setLoadingData] = useState(false);
-    const editor = useEditor({
-        extensions: [
-            StarterKit,
-            TextAlign.configure({ types: ["heading", "paragraph"] })
-        ],
-        editable: !loading
-    });
     const form = useGroupForm({
         initialValues: {
             id: groupId ? Number(groupId) : undefined,
-            name: "",
-            GroupDetails: []
+            name: ""
         },
         validate: {
             name: (value) => executeValidations<string | undefined>(value, [
@@ -38,40 +37,109 @@ export default function GroupForm() {
                     validator: isRequired,
                     message: "Campo requerido"
                 }
-            ]),
-            GroupDetails: (value) => executeValidations<GroupDetails[]>(value, [
-                {
-                    validator: (value) => {
-                        return value?.length <= 2
-                    },
-                    message: "Selecciona por lo menos 2 personas"
-
-                }
             ])
         }
     })
 
-    function DefaultItem({ item }: { item: OptionType }) {
-        return <h1>{item.name}</h1>
+    //0: not selected 1: selected
+    const [groupTransferList, setGroupTransferList] = useState<[GroupMember[], GroupMember[]]>([[], []]);
+
+    function DefaultItem({ item }: { item: GroupMember }) {
+        return <Group>
+            <div>
+                <AvatarClassflow img={item.profilePic} />
+            </div>
+            <div>
+                <Text>{item.name}</Text>
+                <Text fz="sm" c="dimmed">{item.email}</Text>
+            </div>
+        </Group>
 
     }
 
     useEffect(() => {
+        getMembers();
         if (groupId) {
-            fetchData();
+            getMembers();
             return;
         }
     }, [])
 
-    const onError = () => { }
-    const onSuccess = ({ data: { data } }: ResponseClassflow<GroupFormValues>) => {
-        form.setValues(data)
+    useEffect(() => {
+        console.log({
+            all: groupTransferList[0],
+            selected: groupTransferList[1],
+        });
+    }, [groupTransferList])
+
+    const getMembers = async () => {
+        const onError = () => {
+            alert("algo a salido mal");
+        }
+
+        const onSuccess = ({ data: { data }, status }: ResponseClassflow<MemberItem[]>) => {
+
+            if (groupId)
+                getGroupDetails(data)
+            else {
+                let newData: GroupMember[] = data.map((m) => ({
+                    ...m, GroupDetails: {
+                        groupRole: "member",
+                        status: "active",
+                        user: {
+                            ...m
+                        }
+                    }
+                }))
+                setGroupTransferList([[...newData], []])
+            }
+        }
+        const onSend = () => {
+            setLoading(true);
+        }
+        const onFinally = () => {
+            setLoading(false);
+        }
+        let url = "/classes/members";
+        let get = new ClassflowGetService<null, MemberItem[], string>(url, {});
+        get.onSend = onSend;
+        get.onError = onError;
+        get.onSuccess = onSuccess;
+        get.onFinally = onFinally;
+        await classflowAPI.exec(get);
     }
-    const onSend = () => { setLoadingData(true) }
-    const onFinally = () => { setLoadingData(false) }
-    const fetchData = async () => {
-        let get = new ClassflowGetService<{}, GroupFormValues, string>(`/notices/${groupId}`, {});
-        // let res = await axios.post("http://127.0.0.1:8000/authorization",values);
+    const getGroupDetails = async (classMembers: MemberItem[]) => {
+        const onError = () => { }
+        const onSuccess = ({ data: { data } }: ResponseClassflow<GroupClassflow>) => {
+            let newList: [GroupMember[], GroupMember[]] = [[], []];
+            let { GroupDetails, ...resto } = data;
+            classMembers.forEach((classMember) => {
+                let user = GroupDetails.find(({ user }) => user?.id === classMember.id)
+                if (user && user.user) {
+                    let { user: userData, ...resto } = user;
+                    newList[1].push({
+                        ...userData,
+                        GroupDetails: resto
+                    })
+                } else {
+                    newList[0].push({
+                        ...classMember,
+                        GroupDetails: {
+                            groupRole: "member",
+                            status: "active",
+                            user: {
+                                ...classMember
+                            }
+                        }
+                    })
+                }
+            })
+            form.setValues(resto)
+            setGroupTransferList(newList);
+        }
+        const onSend = () => { setLoadingData(true) }
+        const onFinally = () => { setLoadingData(false) }
+        let get = new ClassflowGetService<{}, GroupClassflow, string>(`/groups/${groupId}`, {});
         get.onSend = onSend;
         get.onError = onError;
         get.onSuccess = onSuccess;
@@ -87,34 +155,43 @@ export default function GroupForm() {
         const onSend = () => { setLoading(true) }
         const onFinally = () => { setLoading(false) }
         let hasErrors = form.validate().hasErrors;
-        if (editor?.isEmpty) {
+        if (groupTransferList[1].length < 2) {
             notifications.show({
-                message: "Agrega contenido en el anuncio antes de guardarlo",
+                message: "Agrega por lo menos 2 integrantes al grupo",
                 color: "orange"
             })
             return;
         }
+        let groupDetails = groupTransferList[1].map((member) => ({ userId: member.id, groupRole: "MEMBER" }))
         if (hasErrors)
             return;
-        let body = { ...form.values, id: Number(form.values.id), content: JSON.stringify(editor?.getJSON()) }
+        let body = { ...form.values, id: Number(form.values.id), GroupDetails: groupDetails }
         let url = "";
-        if (groupId)
+        let operation;
+        if (groupId) {
             url = "/groups/edit"
-        else
+            operation = new ClassflowPutService<{
+                name: string,
+                GroupDetails: GroupDetails[],
+            }, string, string>(url, {}, body);
+        }
+        else{
             url = "/groups/create";
-        let post = new ClassflowPostService<{
-            name: string,
-            GroupDetails: GroupDetails[],
-        }, string, string>(url, {}, body);
-        post.onSend = onSend;
-        post.onError = onError;
-        post.onSuccess = onSuccess;
-        post.onFinally = onFinally;
-        await classflowAPI.exec(post);
+            operation = new ClassflowPostService<{
+                name: string,
+                GroupDetails: GroupDetails[],
+            }, string, string>(url, {}, body);
+        }
+        operation.onSend = onSend;
+        operation.onError = onError;
+        operation.onSuccess = onSuccess;
+        operation.onFinally = onFinally;
+        await classflowAPI.exec(operation);
     }
     if (loadingData) {
         return <Text>Loading...</Text>
     }
+
     return <GroupFormProvider form={form}>
         <form onSubmit={form.onSubmit(handleSubmit, (errors) => console.log(errors))}>
             <Stack>
@@ -125,7 +202,14 @@ export default function GroupForm() {
                     placeholder="Nombre del equipo"
                     {...form.getInputProps("name")}
                 />
-                <TransferList Item={DefaultItem} />
+                <InputLabel>Miembros</InputLabel>
+                <TransferList
+                    Item={DefaultItem}
+                    setTransferList={setGroupTransferList}
+                    transferList={groupTransferList}
+                    AllListTile={<Text>Todos</Text>}
+                    SelectedListTile={<Text>Equipo</Text>}
+                />
                 <div style={{
                     alignSelf: "end"
                 }}>
