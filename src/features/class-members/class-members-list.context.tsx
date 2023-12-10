@@ -1,6 +1,10 @@
 import { createContext, useReducer, useContext } from "react";
+import { EnrollmentStatus } from "src/types/EnrollmentTypes";
 import { UserItem } from "src/types/user";
 export interface MemberItem extends UserItem {
+    classEnrollments:{
+        status: EnrollmentStatus
+    }[]
 }
 //define the state's form
 export interface ListMemberState {

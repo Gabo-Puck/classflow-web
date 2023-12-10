@@ -50,7 +50,7 @@ export default function LoginForm() {
                 },
                 {
                     validator: validatePasswordPattern,
-                    message: "La contraseña tiene que tener por lo menos una mayúscula"
+                    message: "La contraseña tiene que tener por lo menos una mayúscula, un número y 8 caracteres"
                 }
             ]),
             repeatPassword: (value, values, path) => executeValidations<string|undefined>(value, [
@@ -64,7 +64,7 @@ export default function LoginForm() {
                 },
                 {
                     validator: validatePasswordPattern,
-                    message: "La contraseña tiene que tener por lo menos una mayúscula"
+                    message: "La contraseña tiene que tener por lo menos una mayúscula, un número y 8 caracteres"
                 }
             ]),
             lastname: (value, values, path) => executeValidations<string | undefined>(value, [
@@ -88,14 +88,14 @@ export default function LoginForm() {
         }
     })
 
+    useEffect(() => {
+        console.log({ userData });
+    }, [userData])
     const onError = () => { }
     const onSuccess = (data: ResponseClassflow<string>) => {
         console.log("TOKEN", data);
         navigate("/login");
     }
-    useEffect(() => {
-        console.log({ userData });
-    }, [userData])
     const onSend = () => { setLoading(true) }
     const onFinally = () => { setLoading(false) }
     const handleSubmit = async (values: SignupFormValues) => {

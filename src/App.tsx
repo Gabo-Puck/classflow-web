@@ -39,6 +39,7 @@ import ClassMembers from '@pages/class-members';
 import Groups from '@pages/groups';
 import GroupsTab from '@features/groups/groups-tab';
 import CreateGroup from '@pages/create-group';
+import ChangePassword from '@features/change-password/change-password-card.component';
 const theme = createTheme({
   components: {
     Container: Container.extend({
@@ -231,7 +232,11 @@ const router = createBrowserRouter([
       {
         path: "validate",
         element: <VerifyEmail />
-      }
+      },
+      {
+        path: "change-password",
+        element: <ChangePassword />
+      },
     ]
   },
 

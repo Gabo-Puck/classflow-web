@@ -8,7 +8,7 @@ export function validatePasswordLength(password: string | undefined) {
 }
 
 export function validatePasswordPattern(password: string | undefined) {
-    return matchPattern(password, /[A-Z]/)
+    return matchPattern(password, /^(?=.*\d)(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/)
 }
 
 export async function validateUniqueEmail(email: string | undefined) {

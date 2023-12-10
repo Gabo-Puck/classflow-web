@@ -9,8 +9,6 @@ interface ISendEmail {
 }
 export default function SendValidation(props: ISendEmail) {
     const [enabled, setEnabled] = useState(true)
-    const navigate = useNavigate();
-
     const onError = (data: ErrorClassflow<string>) => {
         if (data.response?.status == 400) {
             notifications.show({

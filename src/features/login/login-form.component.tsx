@@ -1,4 +1,4 @@
-import { Button, Container, PasswordInput, Stack, Text, TextInput } from "@mantine/core";
+import { Anchor, Button, Container, PasswordInput, Stack, Text, TextInput } from "@mantine/core";
 import { UserFormProvider, UserFormValues, useUserForm } from "./login-form.context";
 import { executeValidations } from "@validations/exec-validations.validator";
 import { validateEmailPattern, validatePasswordPattern } from "@validations/login";
@@ -7,9 +7,11 @@ import { ClassflowPostService, ErrorClassflow, ResponseClassflow, classflowAPI }
 import axios, { AxiosResponse } from "axios";
 import { useAuth } from "@features/auth/auth-context";
 import { useEffect, useState } from "react";
-import { ErrorResponse, useNavigate, useSearchParams } from "react-router-dom";
+import { ErrorResponse, Link, useNavigate, useSearchParams } from "react-router-dom";
 import { notifications } from "@mantine/notifications";
 import SendValidation from "./send-validation.component";
+import { modals } from "@mantine/modals";
+import SendChangePassword from "@features/change-password/change-password-send-form.component";
 
 
 export default function LoginForm() {
@@ -76,6 +78,12 @@ export default function LoginForm() {
         get.onFinally = onFinally;
         await classflowAPI.exec(get);
     }
+    const openModal = () => {
+        modals.open({
+            title:"Cambiar contraseña",
+            children: <SendChangePassword onCorrect={()=>modals.closeAll()}/> 
+        })
+    }
 
     return <UserFormProvider form={form}>
         <Container size="responsive">
@@ -93,6 +101,7 @@ export default function LoginForm() {
                                 placeholder="Contraseña"
                                 {...form.getInputProps("password")}
                             />
+                            <Anchor onClick={openModal}>Cambiar contraseña</Anchor>
                             <Button type="submit">Entrar</Button>
                         </Stack>
                     </form> :

@@ -15,6 +15,7 @@ import { OptionType, TransferList } from "@features/ui/transfer-list.component";
 import { GroupItem } from "src/types/group";
 import { MemberItem } from "@features/class-members/class-members-list.context";
 import AvatarClassflow from "@features/ui/avatar.component";
+import { EnrollmentStatus } from "src/types/EnrollmentTypes";
 
 
 interface GroupMember extends MemberItem {
@@ -78,7 +79,7 @@ export default function GroupForm() {
         }
 
         const onSuccess = ({ data: { data }, status }: ResponseClassflow<MemberItem[]>) => {
-
+            data = data.filter(({ classEnrollments: [{ status }] }) => status == EnrollmentStatus.ENROLLED);
             if (groupId)
                 getGroupDetails(data)
             else {
@@ -175,7 +176,7 @@ export default function GroupForm() {
                 GroupDetails: GroupDetails[],
             }, string, string>(url, {}, body);
         }
-        else{
+        else {
             url = "/groups/create";
             operation = new ClassflowPostService<{
                 name: string,
