@@ -20,7 +20,7 @@ export interface GroupClassflow extends Required<GroupFormValues>{
 
 
 type GroupRoles = "member" | "mod" | "prof"
-type Status = "active" | "mod" | "prof"
+type Status = "active" | "banned"
 
 
 

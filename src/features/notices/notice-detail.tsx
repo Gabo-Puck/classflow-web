@@ -15,6 +15,7 @@ import { notifications } from "@mantine/notifications";
 import Loading from "@features/ui/Loading";
 import UpdateButton from "@features/ui/UpdateButton";
 import DeleteButton from "@features/ui/DeleteButton";
+import NoticesCommentsControl from "@features/notices-comments/notices-comment-control.component";
 export default function NoticeDetail() {
     const navigate = useNavigate();
     const { noticeId } = useParams();
@@ -119,25 +120,29 @@ export default function NoticeDetail() {
     if (loadingData || !notice) {
         return <Text>Loading...</Text>
     }
-    return <Stack p="sm">
-        <Loading visible={loadingDelete} />
-        {/* ...other content */}
-        <Group justify="space-between">
-            <h1>{notice?.title}</h1>
-            <Group>
-                {userData?.id === notice?.creatorId && <>
-                    <UpdateButton onClick={() => navigate(`../editar/${notice.id}`)} />
-                    <DeleteButton onClick={handleDelete} />
-                </>
-                }
+    return <ScrollArea styles={{ root: { flex: 1 } }}>
+        <Stack p="sm">
+            <Loading visible={loadingDelete} />
+            {/* ...other content */}
+            <Group justify="space-between" style={{ flex: 10 }}>
+                <h1>{notice?.title}</h1>
+                <Group>
+                    {userData?.id === notice?.creatorId && <>
+                        <UpdateButton onClick={() => navigate(`../editar/${notice.id}`)} />
+                        <DeleteButton onClick={handleDelete} />
+                    </>
+                    }
+                </Group>
             </Group>
-        </Group>
-        <RichTextEditor editor={editor} style={{
-            maxHeight: "90vh"
-        }}>
-            <ScrollArea.Autosize>
-                <RichTextEditor.Content />
-            </ScrollArea.Autosize>
-        </RichTextEditor>
-    </Stack >
+            <Stack>
+                <RichTextEditor editor={editor}>
+                    <ScrollArea.Autosize>
+                        <RichTextEditor.Content />
+                    </ScrollArea.Autosize>
+                </RichTextEditor>
+                <NoticesCommentsControl />
+
+            </Stack>
+        </Stack >
+    </ScrollArea>
 }

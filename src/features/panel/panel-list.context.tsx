@@ -1,4 +1,5 @@
 import { createContext, useReducer, useContext, useState, useEffect, Dispatch } from "react";
+import { OrderType } from "./panel-order-select.component";
 export interface ClassItem {
     id: number;
     name: string;
@@ -76,10 +77,12 @@ export function classItemReducer(classes: ClassListState, action: ClassItemActio
 //Create a provider to access both, state and dispatch actions
 export function ClassesProvider({ children }: React.PropsWithChildren) {
     const [classes, dispatch] = useReducer(classItemReducer, initialState);
-    const [order, setOrder] = useState(1)
+    const [order, setOrder] = useState(OrderType.NEWEST)
     const [query, setQuery] = useState("")
     useEffect(() => {
-        console.log({ order, query });
+        dispatch({
+            type: "unset"
+        })
     }, [order, query])
     return <ClassesContext.Provider value={classes}>
         <ClassesDispatchContext.Provider value={dispatch}>

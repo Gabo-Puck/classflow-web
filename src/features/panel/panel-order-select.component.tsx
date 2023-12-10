@@ -8,10 +8,16 @@ interface Item {
     label: string
 }
 
+export const enum OrderType {
+    NEWEST,
+    OLDEST,
+    WORK,
+}
+
 const orderOptions: Item[] = [
-    { icon: '🍎', value: "1", label: 'Más reciente', },
-    { icon: '🍌', value: "2", label: 'Más antiguo',  },
-    { icon: '🥦', value: "3", label: 'Más tareas', },
+    { icon: '🍎', value: OrderType.NEWEST.toString(), label: 'Más reciente', },
+    { icon: '🍌', value: OrderType.OLDEST.toString(), label: 'Más antiguo', },
+    { icon: '🥦', value: OrderType.WORK.toString(), label: 'Más tareas', },
 ];
 
 function SelectOption({ icon, value, label }: Item) {
@@ -32,9 +38,9 @@ export default function SelectOrder() {
         onDropdownClose: () => combobox.resetSelectedOption(),
     });
 
-    const [value, setValue] = useState<string | null>("1");
-    const [selectedOption, setSelectedOption] = useState<Item | undefined>();
     const filter = useQuery();
+    const [value, setValue] = useState<string | null>(filter?.order.toString() || OrderType.NEWEST.toString());
+    const [selectedOption, setSelectedOption] = useState<Item | undefined>();
 
     if (!filter) {
         throw new Error("SelectOrder should be used inside a QueryProvider")
@@ -53,6 +59,7 @@ export default function SelectOrder() {
             setOrder(0);
         }
     }, [selectedOption])
+
     const options = orderOptions.map((item) => (
         <Combobox.Option value={item.value} key={item.value} active={value === item.value}>
             <SelectOption {...item} />

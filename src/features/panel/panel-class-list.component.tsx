@@ -17,7 +17,7 @@ export default function ClassList() {
     }
     if (!classes || !dispatch)
         throw new Error("ClassList should be defined as children of ClassProvider")
-    const { items } = classes;
+    
     const onSuccess = ({ data, status }: ResponseClassflow<ClassItem[]>) => {
         dispatch({
             type: "set",
@@ -33,7 +33,7 @@ export default function ClassList() {
     const getClasses = async () => {
         let url = "";
         if (userData?.role === ROLES.STUDENT)
-            url = "/classes/students";
+            url = `/classes/students?order=${filter?.order}`;
         else
             url = "/classes/professor"
         let get = new ClassflowGetService<null, ClassItem[], string>(url, {});
