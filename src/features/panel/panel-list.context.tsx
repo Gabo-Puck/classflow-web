@@ -10,6 +10,14 @@ export interface ClassItem {
         lastname: string;
         profilePic: string
     }
+    terms: {
+        id: number,
+        name: string
+        termCategories: {
+            id: string,
+            name: string
+        }[]
+    }[]
     _count: {
         enrolledStudents: number
     } | undefined
